@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihomefnt.o2o.intf.dao.deal.DealDao">
+
+    <resultMap id="pickModel" type="com.ihomefnt.o2o.intf.domain.deal.dto.DealPickModel">
+        <result property="mobile" column="mobile"/>
+        <result property="status" column="status"/>
+        <result property="orderNo" column="order_no"/>
+    </resultMap>
+    <resultMap id="dealOrderMap" type="com.ihomefnt.o2o.intf.domain.deal.dto.TDealOrder">
+        <result property="dealOrderId" column="idt_temp_order"/>
+        <result property="userId" column="fid_user"/>
+        <result property="actPrdId" column="fid_deal_activity_product"/>
+        <result property="status" column="status"/>
+        <result property="orderNo" column="order_no"/>
+        <result property="dateEnd" column="date_end"/>
+    </resultMap>
+    <resultMap id="resultActPrd" type="com.ihomefnt.o2o.intf.domain.deal.dto.TActivityProduct">
+        <result property="count" column="total"/>
+        <result property="slot" column="slot"/>
+        <result property="dateBegin" column="date_begin"/>
+        <result property="dateEnd" column="date_end"/>
+        <result property="price" column="deal_price"/>
+        <result property="origPrice" column="price"/>
+        <result property="prdId" column="prd_id"/>
+        <result property="name" column="name"/>
+        <result property="image" column="image"/>
+        <result property="actPrdKey" column="idt_deal_activity_product"/>
+        <result property="actId" column="fid_activity"/>
+    </resultMap>
+
+    <select id="queryAllDealOrder" parameterType="map" resultMap="pickModel">
+       <!-- SELECT fid_user, mobile, order_no, status FROM aijia_deal.t_deal_order as t left join
+       t_user as u on t.fid_user = u.u_id where status in (2,5,6) and act_code = 3; -->
+       SELECT t.fid_user, u.mobile, t.order_no, t.status FROM aijia_deal.t_deal_order as t left join
+       user.t_user as u on t.fid_user = u.id where t.status in (2,5,6) and t.act_code = 6;
+   </select>
+
+    <select id="queryDealOrderByMobile" parameterType="map" resultMap="dealOrderMap">
+      <!-- SELECT * from aijia_deal.t_deal_order where status in (2,5,6) and fid_user=
+  (select u_id from t_user where mobile = #{mobile})  and act_code = 3; -->
+	  SELECT * from aijia_deal.t_deal_order where status in (2,5,6) and fid_user=
+	  (select id from user.t_user where mobile = #{mobile})  and act_code = 6;
+    </select>
+
+    <select id="queryActPrdById" parameterType="map" resultMap="resultActPrd">
+      SELECT * FROM aijia_deal.t_deal_activity_product where idt_deal_activity_product = #{key};
+    </select>
+
+    <update id="updateToPicked" parameterType="map">
+        update aijia_deal.t_deal_order set status = 6 where status = 5 and order_no = #{order_no};
+    </update>
+    <update id="updateToComplete" parameterType="map">
+        UPDATE t_order set order_status = 2 where order_status = 5 and order_num = #{order_no};
+    </update>
+    
+    
+    <select id="queryOrderCount" parameterType="map" resultType="int">
+    	SELECT COUNT(1) from aijia_deal.t_deal_order 
+    	where status in (2,5,6) and fid_user=#{userId} and act_code = 6;
+    </select>
+    
+    
+</mapper>

@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihomefnt.o2o.intf.dao.inspiration.InspirationDao">
+
+    <resultMap id="caseResultMap" type="com.ihomefnt.o2o.intf.domain.inspiration.dto.Case">
+        <id property="caseId" column="idt_case"/>
+        <result property="caseName" column="case_name"/>
+        <result property="designerName" column="designer"/>
+        <result property="styleName" column="style_name"/>
+        <result property="size" column="size"/>
+        <result property="houseName" column="fid_house"/>
+        <result property="feature" column="feature"/>
+        <result property="images" column="images"/>
+        <result property="description" column="description"/>
+        <result property="createTime" column="create_time"/>
+        <result property="status" column="status"/>
+        <result property="readCount" column="read_count"/>
+        <result property="transpondCount" column="transpond_count"/>
+    </resultMap>
+    
+    <resultMap id="albumResultMap" type="com.ihomefnt.o2o.intf.domain.inspiration.dto.PictureAlbum">
+        <id property="albumId" column="id"/>
+        <result property="styleName" column="type"/>
+        <result property="createTime" column="create_time"/>
+        <result property="status" column="status"/>
+        <result property="roomId" column="fid_room"/>
+        <result property="readCount" column="read_count"/>
+        <result property="transpondCount" column="transpond_count"/>
+    </resultMap>
+    
+    <resultMap id="pictureResultMap" type="com.ihomefnt.o2o.intf.domain.inspiration.dto.PictureInfo">
+        <id property="pictureId" column="id"/>
+        <result property="imageUrl" column="url"/>
+        <result property="type" column="type"/>
+        <result property="width" column="width"/>
+        <result property="height" column="height"/>
+        <result property="createTime" column="create_time"/>
+        <result property="status" column="status"/>
+        <result property="roomId" column="fid_room"/>
+        <result property="readCount" column="read_count"/>
+        <result property="transpondCount" column="transpond_count"/>
+    </resultMap>
+    
+    <select id="queryCaseList" parameterType="map" resultMap="caseResultMap">
+        select 
+          tc.idt_case,
+          tc.case_name,
+          tt.name style_name,
+          tc.size,
+          tc.images,
+          tc.create_time,
+          tc.designer,
+          tc.read_count
+           
+        from t_case tc
+          left join t_style tt on tc.fid_style = tt.style_key
+        where tc.status=1
+		<if test="conditionS != null">
+		    <![CDATA[
+			${conditionS}
+			]]>		
+		</if>	
+		ORDER BY tc.update_time DESC
+		limit #{from},#{size}
+    </select>
+    
+    <select id="queryCaseDetail" parameterType="map" resultMap="caseResultMap">
+        select 
+          tc.idt_case,
+          tc.case_name,
+          tt.name style_name,
+          tc.size,
+          tc.create_time,
+          tc.designer,
+          tc.fid_house,
+          tc.feature,
+          tc.images,
+          tc.create_time,
+          tc.read_count,
+          tc.transpond_count,
+          tc.description
+           
+        from t_case tc
+          left join t_style tt on tc.fid_style = tt.style_key
+        where tc.idt_case = #{caseId}
+		
+    </select>
+    
+    <select id="queryCaseListCount" parameterType="map" resultType="java.lang.Integer">
+        select count(1) from t_case tc
+          left join t_style tt on tc.fid_style = tt.style_key
+        where tc.status=1
+		<if test="conditionS != null">
+		    <![CDATA[
+			${conditionS}
+			]]>		
+		</if>	
+		
+    </select>
+    
+    <resultMap id="strategyResultMap" type="com.ihomefnt.o2o.intf.domain.inspiration.dto.Strategy">
+        <id property="strategyId" column="idt_strategy"/>
+        <result property="strategyName" column="strategy_name"/>
+        <result property="feature" column="feature"/>
+        <result property="images" column="images"/>
+        <result property="description" column="description"/>
+        <result property="createTime" column="create_time"/>
+        <result property="status" column="status"/>
+        <result property="readCount" column="read_count"/>
+        <result property="transpondCount" column="transpond_count"/>
+    </resultMap>
+    
+    <select id="queryStrategyList" parameterType="map" resultMap="strategyResultMap">
+        select 
+          ts.idt_strategy,
+          ts.strategy_name,
+          ts.images,
+          ts.read_count
+        from t_strategy ts where ts.status=1
+		<if test="conditionS != null">
+		    <![CDATA[
+			${conditionS}
+			]]>		
+		</if>	
+		ORDER BY ts.update_time DESC
+		limit #{from},#{size}
+    </select>
+    
+    <select id="queryStrategyHomeList" parameterType="map" resultMap="strategyResultMap">
+        select 
+          ts.idt_strategy,
+          ts.strategy_name,
+          ts.images,
+          ts.read_count
+        from t_strategy ts
+        where ts.is_top > 0	and ts.status=1
+		  ORDER BY ts.create_time DESC
+		  limit 0,4
+    </select>
+    
+    <select id="queryStrategyDetail" parameterType="map" resultMap="strategyResultMap">
+        select 
+          ts.idt_strategy,
+          ts.strategy_name,
+          ts.feature,
+          ts.type_id,
+          ts.is_top,
+          ts.create_time,
+          ts.read_count,
+          ts.transpond_count,
+          ts.description,
+          ts.images,
+          ts.read_count
+        from t_strategy ts
+          
+        where ts.idt_strategy = #{strategyId}
+    </select>
+    
+    <select id="queryStrategyListCount" parameterType="map" resultType="java.lang.Integer">
+        select count(1) from t_strategy ts
+        where ts.status=1
+		<if test="conditionS != null">
+		    <![CDATA[
+			${conditionS}
+			]]>		
+		</if>	
+    </select>
+    
+    <select id="queryPictureAlbumList" parameterType="map" resultMap="albumResultMap">
+        select ta.idt_album id,tp.fid_room,tp.type,ta.create_time
+        from t_album ta left join t_picture tp on ta.fid_picture = tp.id
+        where ta.status=1 AND tp.status = 1
+		<if test="conditionS != null">
+		    <![CDATA[
+			${conditionS}
+			]]>		
+		</if>
+		GROUP BY id	
+		<if test="orderSort == null">
+			ORDER BY ta.create_time DESC
+		</if>
+		limit #{from},#{size}
+    </select>
+    
+    <select id="queryPictureByAlbumId" parameterType="map" resultMap="pictureResultMap">
+        select tp.id,
+          tp.url,
+          tp.type,
+          tp.fid_room,
+          tp.width,
+          tp.height
+        from t_album ta left join t_picture tp on ta.fid_picture = tp.id
+        where ta.idt_album = #{albumId}
+		
+		ORDER BY tp.create_time DESC
+    </select>
+    
+    <select id="queryPictureAlbumView" parameterType="map" resultMap="pictureResultMap">
+        select 
+          tp.id,
+          tp.url,
+          tp.width,
+          tp.height,
+          tp.image_set_flag
+        from t_picture tp
+        where tp.id = #{albumId}
+		
+    </select>
+    
+    <select id="queryPictureAlbumIds" parameterType="map" resultType="java.lang.Long">
+        select tp.id from t_picture tp
+        where 1=1
+		<if test="conditionS != null">
+		    <![CDATA[
+			${conditionS}
+			]]>		
+		</if>	
+		<if test="orderSort == null">
+			ORDER BY tp.create_time DESC
+		</if>
+    </select>
+    
+    <select id="queryPictureAlbumCount" parameterType="map" resultType="java.lang.Integer">
+        select count(1) from (
+        select ta.idt_album id,tp.fid_room,tp.type
+        from t_album ta left join t_picture tp on ta.fid_picture = tp.id
+        where ta.status=1 AND tp.status = 1
+		<if test="conditionS != null">
+		    <![CDATA[
+			${conditionS}
+			]]>		
+		</if>
+		GROUP BY id	)m
+    </select>
+    
+    <update id="updateAlbumViewCount" parameterType="map">
+        UPDATE t_picture set read_count = read_count + 1 where id = #{id};
+    </update>
+ 
+    <update id="updateStrategyViewCount" parameterType="map">
+        UPDATE t_strategy set read_count = read_count + 1 where idt_strategy = #{id};
+    </update>
+    
+    <update id="updateCaseViewCount" parameterType="map">
+        UPDATE t_case set read_count = read_count + 1 where idt_case = #{id};
+    </update>
+    
+    <update id="updateAlbumTranspondCount" parameterType="map">
+        UPDATE t_picture set transpond_count = transpond_count + 1 where id = #{id};
+    </update>
+ 
+    <update id="updateStrategyTranspondCount" parameterType="map">
+        UPDATE t_strategy set transpond_count = transpond_count + 1 where idt_strategy = #{id};
+    </update>
+    
+    <update id="updateCaseTranspondCount" parameterType="map">
+        UPDATE t_case set transpond_count = transpond_count + 1 where idt_case = #{id};
+    </update>
+    
+    <select id="queryCondition" resultType="java.lang.String" parameterType="map">
+         SELECT condt FROM t_classify_menu 
+         WHERE 610 > id and id > 530
+         and menu_key IN (${menuKey}) AND TYPE = 2 ORDER BY TYPE ASC,parent_key ASC
+    </select>  
+
+ 
+     <!-- 查询文章栏目集合 -->
+	<resultMap id="articleType270Map" type="com.ihomefnt.o2o.intf.domain.inspiration.dto.KeyValue">
+		<id property="key" column="keyword" />
+		<result property="value" column="valueword" />
+		<result property="serialNum" column="serialNum" />
+	</resultMap>    
+    <select id="getArticleTypeList270"  parameterType="map" resultMap="articleType270Map">
+		SELECT id as keyword ,NAME  as valueword ,serialNum FROM t_items WHERE config_id =#{id} order by serialNum;
+	</select>  
+	<!-- 查询文章集合 -->
+	<resultMap id="article270Map" type="com.ihomefnt.o2o.intf.domain.inspiration.dto.Article270">
+		<id property="articleId" column="idt_inspiration_article" />
+		<result property="title" column="title" />
+		<result property="articleType" column="article_type" />
+		<result property="displayArticleType" column="displayArticleType" />
+		<result property="designerNickName" column="designerNickName" />
+		<result property="readCount" column="read_count" />
+		<result property="praiseCount" column="praise_count" />
+		<result property="collectCount" column="collect_count" />
+		<result property="forwardCount" column="forward_count" />
+		<result property="createTime" column="create_time" />
+		<result property="imageUrl" column="first_image" />
+		<result property="content" column="article_content" />
+		<result property="displayArticleTypeNum" column="serialNum" />
+		<result property="summary" column="summary" />
+	</resultMap>    
+	<!-- 只查询置顶并没有超过3天 -->
+    <select id="getDataByTopAndRemain"  parameterType="map" resultMap="article270Map">
+		select article.idt_inspiration_article,article.title,article.article_type ,article.first_image,t_items.serialNum,
+		t_user.nick_name  as designerNickName,article.read_count,article.collect_count,article.forward_count,article.summary,
+		article.praise_count,article.create_time,t_items.name as displayArticleType
+		from t_inspiration_article article
+		LEFT JOIN t_items on t_items.id = article.article_type
+		LEFT JOIN t_user ON article.fid_designer = t_user.u_id
+		LEFT JOIN t_designer ON t_user.mobile = t_designer.mobile	
+		where article.online_type =1
+		AND article.top_type = 1 
+		<if test="key != null and  key!=0">
+		    <![CDATA[
+			and article.article_type=${key}
+			]]>		
+		</if>		
+         <![CDATA[ AND TIMESTAMPDIFF(DAY, article.top_time, NOW()) <= 3 ]]>	
+        ORDER BY article.top_type desc,article.create_time desc
+        limit ${from},${size}
+	</select>
+    <select id="getDataByTime"  parameterType="map" resultMap="article270Map">
+		select article.idt_inspiration_article,article.title,article.article_type ,article.first_image,t_items.serialNum,
+		t_user.nick_name  as designerNickName,article.read_count,article.collect_count,article.forward_count ,article.summary,
+		article.praise_count,article.create_time,t_items.name as displayArticleType
+		from t_inspiration_article article
+		LEFT JOIN t_items on t_items.id = article.article_type
+		LEFT JOIN t_user ON article.fid_designer = t_user.u_id
+		LEFT JOIN t_designer ON t_user.mobile = t_designer.mobile	
+		where article.online_type =1
+		<if test="key != null and  key!=0">
+		    <![CDATA[
+			and article.article_type=${key}
+			]]>		
+		</if>		
+		ORDER BY article.create_time desc
+		limit ${from},${size}
+	</select>
+    <select id="getDataByCondition"   parameterType="map" resultMap="article270Map">
+		select article.idt_inspiration_article,article.title,article.article_type ,article.first_image,t_items.serialNum,
+		t_user.nick_name  as designerNickName,article.read_count,article.collect_count ,article.forward_count,article.summary,
+		article.praise_count,article.create_time,t_items.name as displayArticleType
+		from t_inspiration_article article
+		LEFT JOIN t_items on t_items.id = article.article_type
+		LEFT JOIN t_user ON article.fid_designer = t_user.u_id
+		LEFT JOIN t_designer ON t_user.mobile = t_designer.mobile	
+		where article.online_type =1
+		<if test="key != null and  key!=0">
+		    <![CDATA[
+			and article.article_type=${key}
+			]]>		
+		</if>
+		<if test="excludeList != null" >
+        	AND article.idt_inspiration_article not in
+            <foreach collection="excludeList" item="item" index="index" open="(" close=")" separator=",">
+            	#{item.articleId}
+            </foreach>
+        </if>		
+		ORDER BY article.create_time desc		
+		limit ${from},${size}
+	</select>	
+     <!-- 查询文章实例 -->
+     <select id="getArticleByPK270" parameterType="java.lang.Long" resultType="com.ihomefnt.o2o.intf.domain.inspiration.dto.Article270">
+		select article.idt_inspiration_article as articleId,article.title,article.article_type as articleType,
+		t_items.serialNum as displayArticleTypeNum,
+		t_user.nick_name  as designerNickName,article.read_count as readCount,
+		article.collect_count as collectCount,article.forward_count as forwardCount, article.summary,
+		article.praise_count as praiseCount,article.create_time as createTime,t_items.name as displayArticleType,
+		article.first_image as imageUrl,article.article_content as content
+		from t_inspiration_article article
+		LEFT JOIN t_items on t_items.id = article.article_type
+		LEFT JOIN t_user ON article.fid_designer = t_user.u_id
+		LEFT JOIN t_designer ON t_user.mobile = t_designer.mobile	
+		where article.online_type =1	
+		and idt_inspiration_article = #{articleId} 
+    </select>
+      <!-- 查询文章推荐 -->
+    <select id="getRecommendArticleListBySourceId"  parameterType="java.lang.Long" resultMap="article270Map">
+		select article.idt_inspiration_article,article.title,article.article_type ,article.first_image ,t_items.serialNum,
+		article.read_count,article.praise_count,article.create_time,t_items.name as displayArticleType
+		FROM t_inspiration_relation
+		left join t_inspiration_article article on article.idt_inspiration_article=t_inspiration_relation.fid_target
+		LEFT JOIN t_items on t_items.id = article.article_type
+		where t_inspiration_relation.fid_source = #{sourceId}
+	    ORDER BY order_by ASC
+	</select>
+      <!-- 查询文章评论 -->
+	<resultMap id="commentMap" type="com.ihomefnt.o2o.intf.domain.inspiration.dto.ArticleComment270">
+		<id property="commentId" column="idt_inspiration_comment" />
+		<result property="userName" column="name" />
+		<result property="mobile" column="mobile" />
+		<result property="comment" column="comment" />
+		<result property="createTime" column="create_time" />
+
+	</resultMap>       
+    <select id="getArticleCommentListByArticleId270"  parameterType="map" resultMap="commentMap">
+		select tic.idt_inspiration_comment,user.name,user.mobile,tic.comment,tic.create_time
+		FROM t_inspiration_comment tic
+		left join t_user user on user.u_id=tic.fid_user
+		left join t_inspiration_article article on article.idt_inspiration_article=tic.fid_article
+		where tic.fid_article = #{articleId}
+	    ORDER BY tic.create_time desc
+	    limit ${from},${size}
+	</select>
+	 <!-- 查询文章评论总数 -->
+    <select id="getArticleCommentTotalByArticleId270"  parameterType="java.lang.Long" resultType="java.lang.Integer">
+		select count(1)
+		FROM t_inspiration_comment tic
+		where tic.fid_article = #{articleId}
+	</select>		
+    
+	  <!-- 查询点赞次数 -->
+	<select id="getPraiseArticleCountByArticleIdAndUserId"  parameterType="map" resultType="java.lang.Integer">
+		select count(1)
+		FROM t_inspiration_log
+		where fid_user = #{userId}
+		and fid_article = #{articleId}
+		and op = #{op}
+	 
+	</select>		    
+    
+    <!-- 操作类型op：阅读1,2点赞,3收藏,4转发-->
+    <update id="updateArticleOpByArticleId" parameterType="map">
+        UPDATE t_inspiration_article 
+        <if test="op != null and  op==1">
+        set read_count = read_count + 1
+        </if>
+        <if test="op != null and  op==2">
+        set praise_count = praise_count + 1
+        </if>
+         <if test="op != null and  op==3">
+        set collect_count = collect_count + 1
+        </if>
+        <if test="op != null and  op==4">
+        set forward_count = forward_count + 1
+        </if>
+        where idt_inspiration_article = #{articleId};
+    </update>    	
+    
+     <!-- 插入点赞日志 -->
+    <insert id="insertPraiseLog" parameterType="map" >
+    	insert into t_inspiration_log(fid_user,fid_article,op)
+    	VALUES (#{userId},#{articleId},#{op})
+    </insert>	
+    
+      <!-- 插入评论 -->
+    <insert id="addComment" parameterType="map" >
+    	insert into t_inspiration_comment(fid_user,fid_article,comment,create_time)
+    	VALUES (#{userId},#{articleId},#{comment},now())
+    </insert> 
+    
+     <!-- 根据标题搜索灵感文章 -->
+        <select id="searhArticleList"   parameterType="map" resultMap="article270Map" >
+		select article.idt_inspiration_article,article.title,article.article_type ,article.first_image,t_items.serialNum,
+		t_user.nick_name  as designerNickName,article.read_count,
+		article.praise_count,article.create_time,t_items.name as displayArticleType
+		from t_inspiration_article article
+		LEFT JOIN t_items on t_items.id = article.article_type
+		LEFT JOIN t_user ON article.fid_designer = t_user.u_id
+		LEFT JOIN t_designer ON t_user.mobile = t_designer.mobile	
+		where article.online_type =1 		
+		<if test="title != null">
+			AND article.title like CONCAT('%','${title}','%' )
+		</if>	
+	    ORDER BY article.create_time desc
+	    limit ${from},${size}			
+	</select> 
+	
+	<!-- 根据标题搜索灵感文章总数 -->
+        <select id="searhArticleListTotal"   parameterType="map" resultType="java.lang.Integer" >
+		select count(1)
+		from t_inspiration_article article
+		where article.online_type =1 		
+		<if test="title != null">
+			AND article.title like CONCAT('%','${title}','%' )
+		</if>				
+	</select> 	  
+	
+	<!-- 查询美图 -->
+	<resultMap id="picturetMap" type="com.ihomefnt.o2o.intf.domain.inspiration.dto.Picture270">
+		<id property="imageId" column="id" />
+		<result property="imageUrl" column="url" />
+	</resultMap> 	
+	  <select id="getPictureList" resultMap="picturetMap">
+        select 
+          tp.id,
+          tp.url
+        from t_picture tp
+        where tp.status =1
+        order by tp.create_time desc
+        limit 0,3	
+    </select> 	
+	    		  
+</mapper>

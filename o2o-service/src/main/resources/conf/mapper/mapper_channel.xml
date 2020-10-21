@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihomefnt.o2o.intf.dao.address.ChannelDao">
+
+	<resultMap id="channelResultMap" type="com.ihomefnt.o2o.intf.domain.address.doo.CityDo">
+		<result property="channelCode" column="channel_code" />
+		<result property="channelName" column="channel_name" />
+		<result property="isDefault" column="is_default" />
+		<result property="telephone" column="telephone" />
+	</resultMap>
+	
+	<resultMap id="cityConfigResultMap" type="com.ihomefnt.o2o.intf.domain.address.doo.CityConfigDo">
+        <id column="id_channel" property="channelId"/>
+        <result column="content" property="content"/>
+        <result column="channel_name" property="channelName"/>
+        <result column="channel_code" property="channelCode"/>
+        <result column="phase" property="phase"/>
+        <result column="fid_areas" property="areaId"/>
+    </resultMap>
+	
+	<select id="queryChannel" resultMap="channelResultMap">
+		SELECT channel_code,channel_name,is_default,telephone FROM t_channel where status=1 ORDER BY id_channel ASC
+	</select>
+	<select id="locationCity" resultMap="channelResultMap" parameterType="map">
+		SELECT channel_code,channel_name,is_default,telephone,
+		 ROUND(6378.138*2*ASIN(SQRT(POW(SIN( (#{latitude}*PI()/180-latitude*PI()/180)/2),2)+COS(#{latitude}*PI()/180)*COS(latitude*PI()/180)* POW(SIN( (#{longitude}*PI()/180-longitude*PI()/180)/2),2)))*1000) AS distance
+		   FROM t_channel  WHERE STATUS=1 ORDER BY distance
+	</select>
+	<select id="queryDefaultChannel" resultMap="channelResultMap">
+		SELECT channel_code,channel_name,is_default,telephone FROM t_channel where channel_code=210000
+	</select>
+	
+	<select id="queryCityConfigByCode" parameterType="String" resultMap="cityConfigResultMap">
+		SELECT tc.id_channel, tc.channel_name, tc.channel_code, tc.phase, tc.fid_areas, th.content 
+		from t_channel tc, t_homepage th 
+		WHERE tc.id_channel =  th.fid_channel AND th.type = 1 AND tc.phase = 1 
+		AND tc.channel_code =  #{cityCode}
+    </select>
+	
+</mapper>

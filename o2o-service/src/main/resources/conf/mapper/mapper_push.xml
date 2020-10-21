@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihomefnt.o2o.intf.dao.push.PushDao">
+
+    
+   <resultMap id="PushTempletResultMap" type="com.ihomefnt.o2o.intf.domain.push.dto.PushTempletEntityDto">
+        <id property="templetId" column="templet_id"/>
+        <result property="templetContent" column="templet_content"/>
+        <result property="templetTitle" column="templet_title"/>
+        <result property="noticeType" column="notice_type"/>
+        <result property="noticeStatus" column="notice_status"/>
+        <result property="toUrl" column="to_url"/>
+        <result property="photoUrl" column="photo_url"/>       
+        <result property="unReadCount" column="un_read_count"/>
+        <result property="saveInMsgCenter" column="save_in_msg_center"/>
+        <result property="messageGroupStatus" column="message_group_status"/>
+    </resultMap>
+    
+    <select id="getTempletContentByType" parameterType="map" resultMap="PushTempletResultMap">
+		SELECT templet_id,templet_content,templet_title,notice_type,notice_status,to_url,
+		photo_url,un_read_count,save_in_msg_center,message_group_status
+		FROM  t_push_templet
+        where 1=1
+		<if test="noticeType != null ">  
+            <![CDATA[  
+              and notice_type = #{noticeType}  
+            ]]>
+		</if>
+		<if test="noticeStatus != null ">  
+            <![CDATA[  
+              and notice_status = #{noticeStatus}  
+            ]]>
+		</if>		
+    </select>
+    
+</mapper>

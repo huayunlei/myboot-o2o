@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+    <include resource="logging/default.xml"/>
+
+    <appender name="requestAppender"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_PATH}record-request.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>
+                ${LOG_PATH}archive/record-request.%d{yyyy-MM-dd.HH}.log
+            </FileNamePattern>
+        </rollingPolicy>
+        <layout>
+            <Pattern>%msg%n</Pattern>
+        </layout>
+    </appender>
+
+    <!--接收的请求日志-->
+    <logger name="request" level="INFO" additivity="false">
+        <appender-ref ref="requestAppender"/>
+    </logger>
+
+</configuration>

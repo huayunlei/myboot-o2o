@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihomefnt.o2o.intf.dao.product.CollectionDao">
+    <resultMap id="collectionResultMap" type="com.ihomefnt.o2o.intf.domain.product.doo.TCollection">
+        <id property="collectionId" column="collection_id"/>
+        <result property="userId" column="userId"/>
+        <result property="productId" column="productId"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+    <resultMap id="favoriteResultMap" type="com.ihomefnt.o2o.intf.domain.product.doo.UserProductFavorites">
+        <result property="name" column="name"/>
+        <result property="productId" column="product_id"/>
+        <result property="pictureUrlOriginal" column="images"/>
+        <result property="priceCurrent" column="price"/>
+        <result property="priceMarket" column="price_market"/>
+        <result property="status" column="status"/>
+        <result property="typeKey" column="type_key"/>
+        <result property="houseName" column="house_name"/>
+        <result property="size" column="size"/>
+        <result property="styleName" column="style_name"/>
+        <result property="suitName" column="suit_name"/>
+        <result property="suitCount" column="suitCount"/>
+        <result property="roomCount" column="roomCount"/>
+    </resultMap>
+    
+    <resultMap id="inspirationfavoriteResultMap" type="com.ihomefnt.o2o.intf.domain.product.doo.UserInspirationFavorites">
+        <id property="inspirationId" column="pid"/>
+        <result property="name" column="name"/>
+        <result property="images" column="images"/>
+        <result property="caseSize" column="size"/>
+        <result property="styleName" column="styleName"/>
+        <result property="readCount" column="read_count"/>
+        <result property="designer" column="designer"/>
+    </resultMap>
+    
+    <resultMap id="pictureResultMap" type="com.ihomefnt.o2o.intf.domain.inspiration.dto.PictureAlbum">
+        <id property="albumId" column="id"/>
+        <result property="url" column="url"/>
+        <result property="styleName" column="style_name"/>
+        <result property="width" column="width"/>
+        <result property="height" column="height"/>
+        <result property="createTime" column="create_time"/>
+        <result property="status" column="status"/>
+        <result property="roomId" column="room_id"/>
+        <result property="readCount" column="read_count"/>
+        <result property="transpondCount" column="transpond_count"/>
+        <result property="imageSetFlag" column="image_set_flag"/>
+    </resultMap>
+
+    <select id="queryCollection" parameterType="map" resultMap="collectionResultMap">
+        select * from t_collection where userId =#{userId} and productId = #{productId}
+        and type = #{type}
+    </select>
+    
+    <select id="queryAllFavorites" parameterType="map" resultMap="favoriteResultMap">
+        select product.idt_product as product_id ,name, images , price , price_market,product.status as status,product.fid_product_type type_key
+        from t_product as product inner join t_collection as collection on product.idt_product=collection.productId
+        where collection.userId= #{userId} and collection.status =1 and collection.type = 3 ORDER BY collection.create_time DESC 
+    </select>
+
+    <select id="queryFavoritesSingle" parameterType="map" resultMap="favoriteResultMap">
+        select product.idt_product as product_id ,name, images , price ,price_market,product.status as status,product.fid_product_type type_key
+        from t_product as product inner join t_collection as collection on product.idt_product=collection.productId
+        where collection.userId= #{userId} and collection.status =1 and collection.type = 3 ORDER BY collection.create_time DESC 
+        LIMIT #{from},#{size}
+    </select>
+    <select id="queryFavoritesSuit" parameterType="map" resultMap="favoriteResultMap">
+        select 
+            CONCAT(
+			CASE WHEN th.room > 0 THEN th.room ELSE '' END,
+			CASE WHEN th.room > 0 THEN '房' ELSE ''  END,	
+			CASE WHEN th.living > 0 THEN th.living ELSE '' END,
+			CASE WHEN th.living > 0 THEN '厅' ELSE ''  END,		
+			CASE WHEN th.toilet > 0 THEN th.toilet ELSE '' END,
+			CASE WHEN th.toilet > 0 THEN '卫' ELSE ''  END
+			) house_name,
+			sc.suitCount,
+			th.size,
+			tt.name style_name,
+            ts.idt_suit product_id ,ts.name,ts.images,ts.price,ts.status status
+        from t_suit as ts 
+        inner join t_collection as tc on ts.idt_suit=tc.productId
+        left join t_style tt on ts.fid_style = tt.style_key
+        left join r_house_suit rhs on ts.idt_suit = rhs.fid_suit
+        left join t_house th on rhs.fid_house = th.idt_house
+        left join (select fid_suit,count(product_count) suitCount from r_suit_room rsr 
+        left join r_room_product rrp on rsr.fid_room = rrp.fid_room
+          group by fid_suit) sc on ts.idt_suit=sc.fid_suit
+        where tc.userId= #{userId} and tc.status =1 and tc.type = 1 ORDER BY tc.create_time DESC 
+        LIMIT #{from},#{size}
+    </select>
+    <select id="queryFavoritesRoom" parameterType="map" resultMap="favoriteResultMap">
+        select 
+          th.size,ts.name suit_name,rc.roomCount,tt.name style_name,
+          tr.idt_room product_id,tr.name,tr.images,tr.room_price price,ts.status status
+        from t_suit_room as tr 
+        inner join t_collection as tc on tr.idt_room=tc.productId
+        
+        left join r_suit_room rsr on tr.idt_room = rsr.fid_room
+        left join t_suit ts on rsr.fid_suit = ts.idt_suit
+        left join t_style tt on ts.fid_style = tt.style_key
+        left join r_house_suit rhs on ts.idt_suit = rhs.fid_suit
+        left join t_house th on rhs.fid_house = th.idt_house
+        left join (select fid_room,count(product_count) roomCount from r_room_product
+          group by fid_room) rc on tr.idt_room=rc.fid_room
+        
+        where tc.userId= #{userId} and tc.status =1 and tc.type = 2 ORDER BY tc.create_time DESC 
+        LIMIT #{from},#{size}
+    </select>
+    <select id="queryFavoritesSingleCount" parameterType="map" resultType="java.lang.Integer">
+        select count(1)
+        from t_product as product inner join t_collection as collection on product.idt_product=collection.productId
+        where collection.userId= #{userId} and collection.status =1 and collection.type = 3 
+    </select>
+    <select id="queryFavoritesSuitCount" parameterType="map" resultType="java.lang.Integer">
+        select count(1)
+        from t_suit as ts inner join t_collection as tc on ts.idt_suit=tc.productId
+        where tc.userId= #{userId} and tc.status =1 and tc.type = 1 
+    </select>
+    <select id="queryFavoritesRoomCount" parameterType="map" resultType="java.lang.Integer">
+        select count(1)
+        from t_suit_room as tr inner join t_collection as tc on tr.idt_room=tc.productId
+        where tc.userId= #{userId} and tc.status =1 and tc.type = 2 
+    </select>
+    <insert id="addCollection" parameterType="com.ihomefnt.o2o.intf.domain.product.doo.TCollection"
+            useGeneratedKeys="true" keyProperty="collectionId">
+        INSERT into t_collection(userId, productId, create_time, update_time, status, type)
+        VALUES (#{userId},#{productId},#{createTime},#{updateTime},#{status},#{type})
+    </insert>
+    <update id="updateCollection" parameterType="com.ihomefnt.o2o.intf.domain.product.doo.TCollection">
+        UPDATE t_collection
+        <set>
+            update_time=#{updateTime},status=#{status}
+        </set>
+        WHERE 1=1
+		<if test="collectionId != null">
+			 and collection_id=#{collectionId}
+		</if> 
+		<if test="userId != null">
+			 and userId=#{userId}
+		</if> 		       
+    </update>
+    
+    <select id="queryFavoritesCase" parameterType="map" resultMap="inspirationfavoriteResultMap">
+        select tc.idt_case pid,tc.case_name name,tc.size,tc.images,tt.name styleName,tc.read_count,tc.designer
+        from t_case tc
+          left join t_style tt on tc.fid_style = tt.style_key 
+          inner join t_collection tcl on tc.idt_case = tcl.productId
+        where tcl.userId= #{userId} and tcl.status =1 and tcl.type = #{type}  
+        ORDER BY tcl.create_time DESC 
+        LIMIT #{from},#{size}
+    </select>
+    
+    <select id="queryFavoritesCaseCount" parameterType="map" resultType="java.lang.Integer">
+        select count(1) from t_case tc
+          inner join t_collection tcl on tc.idt_case = tcl.productId
+        where tcl.userId= #{userId} and tcl.status =1 and tcl.type = #{type}  
+    </select>
+    
+    <select id="queryFavoritesStrategy" parameterType="map" resultMap="inspirationfavoriteResultMap">
+        select ts.idt_strategy pid,ts.strategy_name name,ts.images,ts.read_count,ti.name styleName from t_strategy ts
+          left join t_items ti on ts.type_id = ti.id
+          inner join t_collection tcl on ts.idt_strategy = tcl.productId
+        where tcl.userId= #{userId} and tcl.status =1 and tcl.type = #{type} 
+        ORDER BY tcl.create_time DESC 
+        LIMIT #{from},#{size}
+    </select>
+    
+    <select id="queryFavoritesStrategyCount" parameterType="map" resultType="java.lang.Integer">
+        select count(1) from t_strategy ts
+          inner join t_collection tcl on ts.idt_strategy = tcl.productId
+        where tcl.userId= #{userId} and tcl.status =1 and tcl.type = #{type} 
+    </select>
+    
+    <select id="queryPictureAlbumList" parameterType="map" resultMap="pictureResultMap">
+        select 
+          tp.id,
+          tp.url,
+          tp.width,
+          tp.height,
+          tp.image_set_flag
+        from t_picture tp
+        inner join t_collection tcl on tp.id = tcl.productId
+        where tcl.userId= #{userId} and tcl.status =1 and tcl.type = #{type}  
+        ORDER BY tcl.create_time DESC 
+		limit #{from},#{size}
+    </select>
+    
+    <select id="queryPictureAlbumCount" parameterType="map" resultType="java.lang.Integer">
+        select count(1) from t_picture tp
+          inner join t_collection tcl on tp.id = tcl.productId
+        where tcl.userId= #{userId} and tcl.status =1 and tcl.type = #{type} 
+    </select>
+</mapper>

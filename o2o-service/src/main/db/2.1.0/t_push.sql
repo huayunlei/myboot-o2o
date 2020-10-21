@@ -1,0 +1,10 @@
+ALTER TABLE `t_push` ADD `to_url` TEXT COMMENT '跳转链接(消息指向)';
+ALTER TABLE `t_push` ADD  `response_desc` TEXT COMMENT '发送后返回信息描述';
+ALTER TABLE `t_push` ADD  `status_code` SMALLINT(1) DEFAULT '2' COMMENT '1成功0失败2未知';
+ALTER TABLE `t_push` ADD  `notice_sub_type` INT(3) DEFAULT NULL COMMENT '通知小类：1用户订单配送,2用户订单签收,3用户订单退款,4咨询回复,5现金券到账通知 ,6套装推送,7案例主动通知,8攻略主动通知, 9营销活动';
+ALTER TABLE `t_push` ADD  `join_box_status` SMALLINT(1) DEFAULT '2' COMMENT '是否进消息盒子 :1是0否2未知';
+ALTER TABLE `t_push` ADD  `message_group_status` SMALLINT(1) DEFAULT '2' COMMENT '是否是消息组 :1是0否2未知';
+ALTER TABLE `t_push` ADD  `notice_src` SMALLINT(1) DEFAULT '2' COMMENT '通知来源 ：1boss系统2未知';
+ALTER TABLE `t_push` ADD  `sendtime` TIMESTAMP NULL DEFAULT NULL COMMENT '发送时间';
+ALTER TABLE `t_push` ADD  `notice_message_type` SMALLINT(1) DEFAULT '2' COMMENT '通知or消息:1通知0消息2未知';
+ALTER TABLE `t_push` ADD  `business_key` BIGINT(20) DEFAULT NULL COMMENT '业务主键';

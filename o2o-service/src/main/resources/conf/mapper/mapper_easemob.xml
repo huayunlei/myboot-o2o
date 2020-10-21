@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihomefnt.o2oold.intf.easemob">
+
+    <resultMap id="easemobResultMap" type="com.ihomefnt.o2o.intf.domain.emchat.dto.ChatMessage">
+        <id property="id" column="id"/>
+        <result property="msgId" column="msg_id"/>
+        <result property="chatFrom" column="chat_from"/>
+        <result property="chatTo" column="chat_to"/>
+        <result property="groupId" column="group_id"/>
+        <result property="chatType" column="chat_type"/>
+        <result property="createTime" column="create_time"/>
+        <result property="msgType" column="msg_type"/>
+        <result property="msg" column="msg"/>
+        <result property="url" column="url"/>
+        <result property="addr" column="addr"/>
+        <result property="lat" column="lat"/>
+        <result property="lng" column="lng"/>
+        <result property="fileName" column="filename"/>
+        <result property="fileurl" column="fileurl"/>
+    </resultMap>
+
+    <insert id="insertChatMessage" parameterType="com.ihomefnt.o2o.intf.domain.emchat.dto.ChatMessage">
+        INSERT INTO t_chatmessage (
+            msg_id,chat_from,chat_to,group_id,chat_type,create_time, msg_type, 
+            msg,url,addr,lat,lng,filename,fileurl
+        )
+        VALUES (
+            #{msgId},#{chatFrom},#{chatTo},#{groupId},#{chatType},#{createTime},#{msgType},
+            #{msg},#{url},#{addr},#{lat},#{lng},#{fileName},#{fileurl}
+        );
+    </insert>
+    
+</mapper>

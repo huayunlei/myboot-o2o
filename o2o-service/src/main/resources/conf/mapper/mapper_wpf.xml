@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihomefnt.o2o.intf.dao.suit.WpfSuitDao">
+
+   <resultMap id="wpfSuitResultMap" type="com.ihomefnt.o2o.intf.domain.suit.dto.TWpfSuit">
+        <id property="wpfSuitId" column="idt_wpf_suit"/>
+        <result column="wpf_name" property="wpfSuitName"/>
+        <result column="wpf_price_sqm" property="wpfPriceSqm"/>
+        <result column="wpf_first_image" property="wpfFirstImage"/>
+        <result column="wpf_items_image" property="itemsImage"/>
+        <result column="wpf_appfirst_image" property="wpfAppFirstImage"/>
+        <result column="display_order" property="displayOrder"/>
+        <collection property="wpfStyleList" resultMap="wpfStyleResultMap" />
+    </resultMap>
+        
+    <resultMap id="wpfStyleResultMap" type="com.ihomefnt.o2o.intf.domain.suit.dto.TWpfStyle">
+        <id property="wpfStyleId" column="idt_wpf_style"/>
+        <result column="style_key" property="styleKey"/>
+        <result column="style_image" property="styleFirstImage"/>
+        <result column="name" property="styleName"/>
+        <collection property="wpfStyleImageList" resultMap="wpfStyleImageResultMap" />
+    </resultMap>
+    
+    <resultMap id="wpfStyleImageResultMap" type="com.ihomefnt.o2o.intf.domain.suit.dto.TWpfStyleImage">
+        <id property="wpfStyleImageId" column="idr_wpf_suit_image"/>
+        <result column="image" property="image"/>
+        <result column="description" property="description"/>
+        <result column="display_order" property="displayOrder"/>
+    </resultMap>
+
+    <select id="queryWpfSuitList" resultMap="wpfSuitResultMap">
+		SELECT tws.idt_wpf_suit, tws.wpf_name, tws.wpf_price_sqm, tws.wpf_first_image, tws.display_order
+		FROM t_wpf_suit tws
+		WHERE tws.wpf_status = 2
+ 		ORDER BY tws.display_order ASC;
+    
+    </select> 
+    
+    
+    
+    <select id="queryWpfSuitDetail" parameterType="java.lang.Integer" resultMap="wpfSuitResultMap">
+		SELECT tws.idt_wpf_suit, tws.wpf_items_image, tws.wpf_appfirst_image,twsy.style_image,tws.wpf_name, tws.wpf_price_sqm, tws.wpf_first_image, 
+				twsy.idt_wpf_style, twsy.style_key, twsy.name, rwsi.idr_wpf_suit_image, rwsi.image, rwsi.description, rwsi.display_order   
+		FROM t_wpf_suit tws, r_wpf_suit_image rwsi, t_wpf_style twsy 
+		WHERE tws.idt_wpf_suit = #{wpfSuitId} AND tws.wpf_status = 2 AND rwsi.image_status = 1 AND rwsi.category = 1
+		AND tws.idt_wpf_suit = rwsi.fid_wpf_suit AND twsy.style_key = rwsi.fid_style;
+    
+    </select> 
+    
+    
+    <select id="queryWpfSuitBomImage" parameterType="com.ihomefnt.o2o.intf.domain.suit.dto.HttpWpfSuitRequest" resultMap="wpfStyleImageResultMap">
+		SELECT rwsi.idr_wpf_suit_image, rwsi.image, rwsi.description, rwsi.display_order  
+		FROM  r_wpf_suit_image rwsi
+		WHERE rwsi.fid_wpf_suit = #{wpfSuitId} AND rwsi.fid_style = 0 AND rwsi.category = #{category}  
+    
+    </select> 
+
+	<resultMap id="wpfSuitAdResultMap" type="com.ihomefnt.o2o.intf.domain.suit.dto.TWpfSuitAd">
+        <id property="wpfSuitAdId" column="idt_wpf_image"/>
+        <result column="image" property="image"/>
+        <result column="title" property="title"/>
+        <result column="description" property="description"/>
+        <result column="block" property="block"/>
+        <result column="display_order" property="displayOrder"/>
+    </resultMap>
+    
+ 	<select id="queryWpfSuitAd" resultMap="wpfSuitAdResultMap">
+		SELECT twi.idt_wpf_image, twi.image, twi.title, twi.description, twi.block, twi.display_order 
+		FROM t_wpf_image twi 
+		WHERE twi.category = 2
+		and twi.block = 0
+		ORDER BY block ASC, display_order ASC 
+    
+    </select> 
+	
+	<insert id="addWpfServiceAppointment" parameterType="com.ihomefnt.o2o.intf.domain.suit.dto.HttpWpfServiceRequest">
+    	insert into t_appoint(mobile, name, suit_name, os_type  
+    		<if test="buildingInfo != null" >
+		        , appoint_time 
+		    </if>
+		) 
+    	VALUES (#{mobile}, #{name}, #{wpfName},3
+    	<if test="buildingInfo != null" >
+		        , #{buildingInfo}  
+		</if>
+    	)
+    </insert>
+    
+    <insert id="addH5WpfServiceAppointment" parameterType="com.ihomefnt.o2o.intf.domain.suit.dto.HttpWpfAppointmentRequest">
+    	insert into t_appoint(mobile, name ,suit_name, type, os_type 
+		) 
+    	VALUES (#{phoneNum}, #{name}, #{suit_name}, 0, 3
+    	)
+    </insert>
+    
+    <resultMap type="com.ihomefnt.o2o.intf.domain.suit.dto.HttpWpfAppointmentRequest" id="requestResultMap">
+    	<result property="name" column="name"/>
+    	<result property="phoneNum" column="mobile"/>
+    	<result property="city" column="location"/>
+    </resultMap>
+
+	<select id="queryRequestByAccessToken" parameterType="java.lang.String" resultMap="requestResultMap">
+		select name,mobile,location 
+		from t_user , t_log 
+		where t_log.u_id = t_user.u_id and t_log.access_token = #{accessToken}
+	</select>
+	
+	<!-- 根据套装id获取套装的材料信息 -->
+	<resultMap type="com.ihomefnt.o2o.intf.domain.suit.dto.TWpfMaterial" id="materialItemsResult">
+		<result property="materialId" column="block"/>
+		<result property="wpfId" column="fwpf_id"/>
+		<collection property="materialItemList" resultMap="materialResultMap"/>
+	</resultMap>
+	<resultMap type="com.ihomefnt.o2o.intf.domain.suit.dto.TWpfMaterialItem" id="materialResultMap">
+		<id property="materialItemId" column="idt_wpf_image"/>
+		<result property="materialItemUrl" column="image"/>
+		<result property="materialItemName" column="title"/>
+		<result property="materialDisplayOrder" column="display_order"/>
+	</resultMap>
+	<select id="queryWpfMaterialItems" parameterType="java.lang.Integer" resultMap="materialItemsResult">
+		SELECT
+			idt_wpf_image,
+			image,
+			title,
+			block,
+			fwpf_id,
+			display_order
+		FROM
+			t_wpf_image
+		WHERE
+			category = 2
+		AND fwpf_id = 1
+		ORDER BY block asc,display_order asc
+	</select>
+	
+	<!-- 根据id获取全品家的案例 -->
+	<resultMap type="com.ihomefnt.o2o.intf.domain.suit.dto.WpfCaseItem" id="wpfCaseResultMap">
+		<id property="wpfCaseId" column="idt_inspiration_article"/>
+		<result property="wpfCaseTitle" column="title"/>
+		<result property="wpfCaseImageUrl" column="first_image"/>
+	</resultMap>
+	<select id="queryWpfCaseList" parameterType="map" resultMap="wpfCaseResultMap">
+		SELECT
+			idt_inspiration_article,
+			title,
+			first_image
+		FROM
+			t_inspiration_article
+		WHERE
+			online_type = 1
+		AND idt_inspiration_article IN
+		<foreach collection="wpfCaseIdList" item="item" index="index" open="(" close=")" separator=",">
+            	#{item}
+        </foreach>
+		
+	</select>
+             
+</mapper>

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihomefnt.o2o.intf.dao.product.ProductTypeDao">
+   <resultMap id="productType" type="com.ihomefnt.o2o.intf.manager.util.common.bean.TreeNode">
+       <result property="nodeName" column="name"/>
+       <result property="key" column="type_key"/>
+       <result property="parentKey" column="parent_key"/>
+   </resultMap>
+   <resultMap id="classifyNode" type="com.ihomefnt.o2o.intf.domain.product.doo.ClassifyNode">
+       <result property="name" column="name"/>
+       <result property="key" column="menu_key"/>
+       <result property="parentKey" column="parent_key"/>
+       <result property="status" column="status"/>
+       <result property="sort" column="sort"/>
+       
+   </resultMap>
+
+    <select id="query" parameterType="map" resultMap="productType">
+        SELECT * from t_product_type
+    </select>
+    <select id="queryClassifyNodeByIds" resultMap="classifyNode" parameterType="map">
+         SELECT menu_key, NAME,parent_key,status,sort 
+         FROM t_classify_menu WHERE is_show=TRUE AND type =2 
+         and (menu_key in (${menuIds}) or parent_key in (${menuIds}))
+         ORDER BY parent_key ASC,sort ASC
+    </select>
+    <select id="queryClassifyNodes" resultMap="classifyNode">
+         SELECT menu_key, NAME,parent_key,status,sort FROM t_classify_menu WHERE 407 > id and is_show=TRUE AND type in (1,3) ORDER BY parent_key ASC,sort ASC
+    </select>
+    <select id="queryClassifyNodeById" parameterType="java.lang.Long" resultMap="classifyNode">
+         SELECT menu_key, NAME,parent_key,status,sort FROM t_classify_menu WHERE 407 > id and menu_key=#{menuId} AND type in (1,3)
+    </select>
+    <select id="queryProductNodeByClassifyName" parameterType="java.lang.String" resultType="java.lang.Long">
+         SELECT type_key FROM t_product_type WHERE  NAME=#{name} 
+    </select>
+    
+    <select id="queryClassifyNameByProductNode" parameterType="java.lang.Long" resultType="java.lang.String">
+         SELECT name FROM t_product_type WHERE  type_key=#{nodeId} 
+    </select>
+    
+    <select id="queryClassifyNodesByCondit" resultMap="classifyNode" parameterType="map">
+         SELECT menu_key, NAME,parent_key,status,sort FROM t_classify_menu 
+         WHERE  407 > id and  is_show=TRUE AND type in (1,3)
+		<if test="parentKey != null">
+			and (parent_key=#{parentKey} OR menu_key = #{parentKey} or menu_key in (40,41,42,47))
+		</if>         
+         ORDER BY parent_key ASC,sort ASC
+    </select>    
+
+    <!-- 查询楼盘node信息 -->
+    <select id="queryBuildingClassifyNodes" resultMap="classifyNode" parameterType="map">
+    	SELECT
+			tcm.menu_key,
+			tcm. NAME,
+			tcm.parent_key,
+			tcm. STATUS,
+			tcm.sort
+		FROM
+			t_classify_menu tcm
+		WHERE
+			407 > id
+		AND tcm.is_show = TRUE
+		AND tcm.type IN (2, 3)
+		<if test="cityCode != null">
+			AND (tcm.zipcode=#{cityCode} or tcm.zipcode is null)
+		</if>
+		AND (tcm. NAME IN (
+			SELECT DISTINCT
+				tb. NAME
+			FROM
+				t_building tb,
+				r_building_house rbh,
+				t_house th,
+				r_house_suit rhs,
+				t_suit ts,
+				t_style tt
+			WHERE
+				tb.idt_building = rbh.fid_building
+			AND rbh.fid_house = th.idt_house
+			AND th.idt_house = rhs.fid_house
+			AND rhs.fid_suit = ts.idt_suit
+			AND ts. STATUS = 1
+			AND ts.fid_style = tt.style_key
+			AND tb.fid_company IN (7, 8)
+		)
+		OR tcm. NAME IN ('全部楼盘', '楼盘'))
+		ORDER BY
+			tcm.parent_key ASC,
+			tcm.sort ASC
+    </select>
+    
+    <!-- 查询风格node -->
+    <select id="queryStyleClassifyNodes" resultMap="classifyNode" parameterType="map">
+    	SELECT
+			tcm.menu_key,
+			tcm. NAME,
+			tcm.parent_key,
+			tcm. STATUS,
+			tcm.sort
+		FROM
+			t_classify_menu tcm
+		WHERE
+			407 > id
+		AND tcm.is_show = TRUE
+		AND tcm.type IN (2, 3)
+		<if test="cityCode != null">
+			AND (tcm.zipcode=#{cityCode} or tcm.zipcode is null)
+		</if>
+		AND (tcm. NAME IN (
+			SELECT DISTINCT
+				tt. NAME
+			FROM
+				t_building tb,
+				r_building_house rbh,
+				t_house th,
+				r_house_suit rhs,
+				t_suit ts,
+				t_style tt
+			WHERE
+				tb.idt_building = rbh.fid_building
+			AND rbh.fid_house = th.idt_house
+			AND th.idt_house = rhs.fid_house
+			AND rhs.fid_suit = ts.idt_suit
+			AND ts. STATUS = 1
+			AND ts.fid_style = tt.style_key
+			AND tb.fid_company IN (7, 8)
+		)
+		OR tcm. NAME in ('全部风格','风格'))
+    </select>
+    
+    <!-- 查询面积node -->
+    <select id="querySizeClassifyNodes" resultMap="classifyNode" parameterType="map">
+    	SELECT
+			tcm.menu_key,
+			tcm. NAME,
+			tcm.parent_key,
+			tcm. STATUS,
+			tcm.sort
+		FROM
+			t_classify_menu tcm
+		WHERE
+			407 > id
+		AND tcm.is_show = TRUE
+		AND tcm.type IN (2, 3)
+		AND tcm. NAME IN (
+			'80平米以下',
+			'80-120平米',
+			'120平米以上',
+			'全部面积',
+			'面积'
+		)
+		ORDER BY
+			tcm.parent_key ASC,
+			tcm.sort ASC
+    </select>
+    
+    <select id="queryCondition" resultType="java.lang.String" parameterType="map">
+         SELECT condt FROM t_classify_menu WHERE 407 > id and   menu_key IN (${menuKey}) AND TYPE IN (2,3) ORDER BY TYPE ASC,parent_key ASC
+    </select>    
+</mapper>

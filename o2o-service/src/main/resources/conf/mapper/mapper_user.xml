@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihomefnt.o2o.intf.dao.user.UserDao">
+
+    <resultMap id="userResultMap" type="com.ihomefnt.o2o.intf.domain.user.doo.UserDo">
+        <id property="uId" column="u_id"/>
+        <result property="name" column="name"/>
+        <result property="password" column="password"/>
+        <result property="mobile" column="mobile"/>
+        <result property="grade" column="grade"/>
+        <result property="uImg" column="u_img"/>
+        <result property="nickName" column="nick_name"/>
+        <result property="telephone" column="telephone"/>
+        <result property="regTime" column="reg_time"/>
+        <result property="briefIntroduce" column="brief_introduce"/>
+        <result property="loginSms" column="sms_login"/>
+        <result property="loginSmsDeadLine" column="sms_valid"/>
+    </resultMap>
+
+    <resultMap id="logResultMap" type="com.ihomefnt.o2o.intf.domain.user.doo.LogDo">
+        <id property="lId" column="l_id"/>
+        <result property="uId" column="u_id"/>
+        <result property="accessToken" column="access_token"/>
+        <result property="refreshToken" column="refresh_token"/>
+        <result property="expire" column="expire"/>
+        <result property="logTime" column="log_time"/>
+    </resultMap>
+    <!--用户关系表 -->
+    <resultMap id="userRelationResultMap" type="com.ihomefnt.o2o.intf.domain.user.doo.UserRelationDo">
+        <result property="id" column="id"/>
+        <result property="invitemobile" column="invite_mobile"/>
+        <result property="invitedmobile" column="invited_mobile"/>
+        <result property="status" column="status"/>
+    </resultMap>
+    <!--钱袋子 -->
+    <resultMap id="userWalletnResultMap" type="com.ihomefnt.o2o.intf.domain.user.doo.WalletDo">
+        <result property="id" column="id"/>
+        <result property="uid" column="u_id"/>
+        <result property="userMobile" column="user_mobile"/>
+        <result property="recommendMobile" column="recommend_mobile"/>
+        <result property="userMoney" column="user_money"/>
+        <result property="rebateRules" column="rebate_rules"/>
+        <result property="frozenMoney" column="frozen_money"/>
+        <result property="status" column="status"/>
+        <result property="orderTime" column="order_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="changeType" column="change_type"/>
+        <result property="myCommission" column="my_commission"/>
+    </resultMap>
+    <resultMap id="userWalletnResultMapFromOrder" type="com.ihomefnt.o2o.intf.domain.user.doo.WalletDo">
+        <result property="userMobile" column="mobile"/>
+        <result property="recommendMobile" column="rec_mobile"/>
+        <result property="userMoney" column="order_price"/>
+        <result property="rebateRules" column="rebate_rules"/>
+        <result property="status" column="status"/>
+        <result property="orderTime" column="order_time"/>
+        <result property="myCommission" column="my_commission"/>
+    </resultMap>
+    <!-- 我邀请的用户 -->
+    <resultMap id="myInvitedUsersResultMap" type="com.ihomefnt.o2o.intf.domain.user.doo.UserRelationInfoDo">
+        <result property="invitemobile" column="invite_mobile"/>
+        <result property="invitedmobile" column="invited_mobile"/>
+        <result property="status" column="status"/>
+        <result property="uId" column="u_id"/>
+        <result property="name" column="name"/>
+        <result property="mobile" column="mobile"/>
+        <result property="uImg" column="u_img"/>
+        <result property="regTime" column="reg_time"/>
+        <result property="createTime" column="create_time"/>
+        
+        
+    </resultMap>
+   
+    
+
+    <resultMap id="regResultMap" type="com.ihomefnt.o2o.intf.domain.user.doo.RegisterDo">
+        <id property="rId" column="r_id"/>
+        <result property="password" column="password"/>
+        <result property="mobile" column="mobile"/>
+        <result property="activateCode" column="activate_code"/>
+        <result property="registerKey" column="register_key"/>
+    </resultMap>
+
+    <select id="queryUser" parameterType="map" resultMap="userResultMap">
+    	SELECT u_id,name,password,mobile,u_img,nick_name,telephone,grade,reg_time, brief AS brief_introduce FROM t_user WHERE u_id = #{userId}
+    </select>
+    
+    <select id="queryUserByNickName" parameterType="map" resultMap="userResultMap">
+    	SELECT u_id,name,password,mobile,u_img,nick_name,telephone,grade,reg_time, brief AS brief_introduce FROM t_user WHERE nick_name = #{nickName}  LIMIT 1
+    </select>
+    
+    
+    <select id="queryUserByMobile" parameterType="map" resultMap="userResultMap">
+    	SELECT u_id,name,mobile,sms_login,sms_valid,reg_time FROM t_user WHERE mobile = #{mobile}
+    </select>
+    <select id="queryUserByMobilePassword" parameterType="map" resultMap="userResultMap">
+        SELECT u_id,name,mobile,password FROM t_user WHERE mobile = #{mobile}
+        <if test="password!=null and password!=''">
+            AND password = MD5(#{password})
+        </if>
+    </select>
+    <select id="queryLogByToken" parameterType="map" resultMap="logResultMap">
+		SELECT * from t_log where access_token = #{accessToken} and os_type=1
+    </select>
+    <select id="queryRegistration" parameterType="map" resultMap="regResultMap">
+        SELECT * FROM t_register WHERE mobile = #{mobile} and register_key = #{registerKey}
+        <if test="activateCode!=null and activateCode!=''">
+            and activate_code = #{activateCode}
+        </if>
+    </select>
+
+    <insert id="addRegistration" parameterType="map">
+    	replace into t_register(mobile,password,register_key,activate_code)
+    	VALUES (#{mobile},MD5(#{password}),#{registerKey},#{activateCode})
+    </insert>
+
+    <update id="updateActivateCode" parameterType="map">
+		UPDATE t_register set activate_code = #{activateCode}
+		WHERE mobile = #{mobile} and register_key = #{registerKey}
+    </update>
+
+    <update id="updatePassword" parameterType="map">
+		UPDATE t_user SET  password = MD5(#{password}) WHERE mobile = #{mobile}
+    </update>
+    <update id="updateSmsCode" parameterType="com.ihomefnt.o2o.intf.domain.user.doo.UserDo">
+        UPDATE t_user SET 
+          sms_login = #{loginSms},
+          sms_valid = #{loginSmsDeadLine}
+        WHERE mobile = #{mobile}
+    </update>
+    <delete id="deleteLog" parameterType="map">
+		DELETE  FROM t_log WHERE refresh_token = #{refreshToken}  and os_type=1
+    </delete>
+
+    <select id="queryLogByUid" parameterType="map" resultMap="logResultMap">
+		select *  FROM t_log WHERE u_id = #{uId}  and os_type=1
+    </select>
+
+    <insert id="addUser" parameterType="com.ihomefnt.o2o.intf.domain.user.doo.UserDo">
+        INSERT INTO t_user (name, mobile,password,rec_mobile,device_id,p_value, location, os_type,sms_login,sms_valid)
+        VALUES (#{name},#{mobile},MD5(#{password}),#{recMobile},#{deviceToken},#{pValue},#{location},#{osType},#{loginSms},#{loginSmsDeadLine});
+    </insert>
+    <!--新增用户关系表 -->
+    <insert id="addUserRelation" parameterType="com.ihomefnt.o2o.intf.domain.user.doo.UserRelationDo">
+        INSERT INTO t_user_relation (invite_mobile, invited_mobile,status,create_time) VALUES (#{invitemobile},#{invitedmobile},#{status},#{createTime});
+    </insert>
+    <!--查询用户关系表 -->
+    <select id="queryUserRelation" parameterType="com.ihomefnt.o2o.intf.domain.user.doo.UserRelationDo" resultMap="userRelationResultMap">
+		select *  FROM t_user_relation 
+		<where>
+		     1=1 
+            <if test="invitedmobile != null and '' != invitedmobile">  
+            <![CDATA[  
+              and invited_mobile = #{invitedmobile}  
+            ]]>  
+            </if>
+            <if test="invitemobile != null and '' != invitemobile ">  
+            <![CDATA[  
+              and invite_mobile = #{invitemobile}  
+            ]]>  
+            </if>
+            <if test="status != null  and '' != invitemobile ">  
+            <![CDATA[  
+              and status = #{status}  
+            ]]>  
+            </if> 
+        </where>
+    </select>
+    <!--更新 -->
+    <update id="updateUserRelation" parameterType="com.ihomefnt.o2o.intf.domain.user.doo.UserRelationDo">
+	UPDATE t_user_relation set status = #{status} 
+	<if test="createTime != null and '' != createTime">  
+            <![CDATA[  
+             , create_time = #{createTime}
+            ]]>  
+            </if>
+	
+	<where>
+	    1=1
+		<if test="invitedmobile != null and '' != invitedmobile">  
+            <![CDATA[  
+              and invited_mobile = #{invitedmobile}  
+            ]]>  
+            </if>
+            <if test="invitemobile != null and '' != invitemobile">  
+            <![CDATA[  
+              and invite_mobile = #{invitemobile}  
+            ]]>  
+            </if>
+            <if test="id != null and '' != id">  
+            <![CDATA[  
+              and id = #{id}  
+            ]]>  
+            </if>
+            <if test="status != null and 3 == status">  
+            <![CDATA[  
+              and status = 1  
+            ]]>  
+            </if>
+	</where>
+     </update>
+     <!-- 插入钱袋子 -->
+      <insert id="saveWallet" parameterType="com.ihomefnt.o2o.intf.domain.user.doo.WalletDo"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_wallet(u_id,user_mobile,recommend_mobile,user_money,rebate_rules,frozen_money,status,order_time,create_time,change_type,order_num) 
+        values (#{uid},#{userMobile},#{recommendMobile},#{userMoney},#{rebateRules},#{frozenMoney},#{status},#{orderTime},#{createTime},#{changeType},#{orderNum})
+    </insert>
+     
+     <!--查询钱袋子-->
+    <select id="queryMyWallet" parameterType="map" resultMap="userWalletnResultMap">
+		select id,u_id,user_mobile,recommend_mobile,user_money,rebate_rules,frozen_money,status,UNIX_TIMESTAMP(order_time) as order_time,change_type,user_money*rebate_rules as my_commission  FROM t_wallet WHERE recommend_mobile = #{mobile} limit #{from},#{pageSize}
+    </select>
+    <!-- 查询钱袋子来自订单表事实查询 -->
+    <select id="queryMyWalletFromOrder" parameterType="map" resultMap="userWalletnResultMapFromOrder">
+		SELECT t.order_num,t.mobile ,t.rec_mobile ,t.create_time AS order_time,t.order_price,t_wallet.rebate_rules,
+t.order_price*t_wallet.rebate_rules AS my_commission,IF((TO_DAYS(NOW()) - TO_DAYS(t.create_time))>15,1,0) AS STATUS
+FROM (
+SELECT t_order.order_price,t_order.order_num,t_user.mobile,t_user.rec_mobile,t_order.create_time  FROM 
+t_user INNER JOIN t_order ON t_user.u_id=t_order.userId 
+WHERE t_user.rec_mobile=#{mobile} AND t_order.order_status=2) t INNER JOIN t_wallet ON t.order_num=t_wallet.order_num
+LIMIT  #{from},#{pageSize}
+    </select>
+    <select id="querMyWalletCount" parameterType="map" resultType="java.lang.Long">
+		SELECT count(1) as count
+FROM (
+SELECT t_order.order_price,t_order.order_num,t_user.mobile,t_user.rec_mobile,t_order.create_time  FROM 
+t_user INNER JOIN t_order ON t_user.u_id=t_order.userId 
+WHERE t_user.rec_mobile=#{mobile} AND t_order.order_status=2) t INNER JOIN t_wallet ON t.order_num=t_wallet.order_num
+    </select>
+    <select id="queryMyWalletSum" parameterType="map" resultType="java.lang.Double">
+		SELECT t.order_num,t.mobile as invite_mobile,t.rec_mobile as invite_mobile,t.create_time AS order_time,t.order_price,t_wallet.rebate_rules,
+t.order_price*t_wallet.rebate_rules AS my_commission,IF((TO_DAYS(NOW()) - TO_DAYS(t.create_time))>15,1,0) AS STATUS
+FROM (
+SELECT t_order.order_price,t_order.order_num,t_user.mobile,t_user.rec_mobile,t_order.create_time  FROM 
+t_user INNER JOIN t_order ON t_user.u_id=t_order.userId 
+WHERE t_user.rec_mobile=#{mobile}  AND t_order.order_status=2) t INNER JOIN t_wallet ON t.order_num=t_wallet.order_num
+        <where>
+        1=1
+		<if test="mobile != null and '' != mobile">
+		and recommend_mobile  = #{mobile}
+		</if>
+		<if test="status !=null  and '' != status">
+		and status  = #{status}
+		</if>
+		</where>
+    </select>
+    <select id="queryMyWalletSumFromOrder" parameterType="map" resultType="java.lang.Double">
+		SELECT SUM(tt.my_commission) AS my_wallets FROM (
+SELECT 
+t.order_price*t_wallet.rebate_rules AS my_commission,IF((TO_DAYS(NOW()) - TO_DAYS(t.create_time))>15,1,0) AS STATUS
+FROM (
+SELECT t_order.order_price,t_order.order_num,t_user.mobile,t_user.rec_mobile,t_order.create_time  FROM 
+t_user INNER JOIN t_order ON t_user.u_id=t_order.userId 
+WHERE t_user.rec_mobile=#{mobile} AND t_order.order_status=2
+) t INNER JOIN t_wallet ON t.order_num=t_wallet.order_num 
+
+) tt 
+        <where>
+        1=1
+		<if test="status !=null  and '' != status">
+		and status  = #{status}
+		</if>
+		</where>
+    </select>
+    <!--查询邀请用户 -->
+    <select id="queryMyInvitedUsers" parameterType="map" resultMap="myInvitedUsersResultMap">
+		<!-- SELECT * FROM t_user_relation left join user.t_user on t_user_relation.invited_mobile=t_user.mobile where  t_user_relation.invite_mobile  = #{mobile} limit #{from},#{pageSize} -->
+		
+		SELECT tur.id, invite_mobile, invited_mobile, tur.status, tu.id AS u_id, 
+			tu.username AS name, tu.mobile, tu.reg_time, tm.u_img, tur.create_time
+		FROM t_user_relation tur
+		left join user.t_user tu on tur.invited_mobile=tu.mobile 
+		LEFT JOIN user.t_member tm ON tu.id = tm.user_id
+		where  tur.invite_mobile  = #{mobile}
+		limit #{from},#{pageSize}
+    </select>
+    <!--统计 -->
+    <select id="queryMyInvitedUsersCount" parameterType="map" resultType="java.lang.Integer">
+		SELECT count(1) count FROM t_user_relation WHERE 1=1
+		<if test="mobile!=null">
+		and invite_mobile  = #{mobile}
+		</if>
+		<if test="status!=null">
+		and  status  = #{status}
+		</if>
+    </select>
+    
+    
+
+    <delete id="deleteRegister" parameterType="map">
+        DELETE from t_register WHERE r_id = #{rId}
+    </delete>
+
+    <insert id="addLog" parameterType="com.ihomefnt.o2o.intf.domain.user.doo.LogDo">
+        INSERT INTO t_log(u_id, access_token, refresh_token, expire, log_time,os_type)
+        VALUES (#{uId},#{accessToken},#{refreshToken},#{expire},#{logTime},1)
+    </insert>
+     <!-- 超过三个月解决绑定关系 -->
+ <update id="unboundRelationShip">
+		UPDATE t_user_relation SET STATUS=4 WHERE STATUS=1 AND (TO_DAYS(NOW()) - TO_DAYS(create_time))>90
+    </update>
+    
+    <delete id="deleteLogByAccessToken" parameterType="map">
+		DELETE  FROM t_log WHERE access_token = #{accessToken} and os_type=1
+    </delete>
+    
+    <insert id="addAccessLog" parameterType="map">
+    	replace into t_user_log(user_id,os_type,create_date) VALUES (#{userId},#{osType},now())
+    </insert>
+    
+    <update id="updateUserTag" parameterType="map">
+        UPDATE r_user_tag SET 
+          tag_name = #{tagName}
+        WHERE fid_user = #{userId} and tag_type = #{tagType}
+    </update>
+    
+   <update id="updateUserNickById" parameterType="map">
+        UPDATE t_user SET 
+          nick_name = #{nickName}
+        WHERE u_id = #{userId} 
+    </update>
+    
+    <select id="queryUserTag" parameterType="map" resultType="java.lang.String">
+		select tag_name from r_user_tag rut 
+		  where rut.fid_user = #{userId} and rut.status = 1
+        <if test="tagType != null">
+            and rut.tag_type = #{tagType}
+        </if>
+        order by tag_type
+    </select>
+    
+    <insert id="addUserTag" parameterType="map">
+		insert into r_user_tag(fid_user,tag_type,tag_name) values (#{userId},#{tagType},#{tagName});
+    </insert>
+    
+    
+    <insert id="addUserVisitLog" parameterType="com.ihomefnt.o2o.intf.domain.user.doo.UserVisitLogDo" useGeneratedKeys="true" keyProperty="visitLogId">
+        INSERT INTO t_visit_log
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+          <if test="deviceToken != null" >
+	        device_token,
+	      </if>
+	      <if test="mobile != null" >
+	        mobile,
+	      </if>        
+	      <if test="visitType != null" >
+	        visit_type,
+	      </if>        
+	      <if test="action != null" >
+	        action,
+	      </if>        
+	      <if test="targetType != null" >
+	        target_type,
+	      </if>
+	      <if test="targetId != null" >
+	        target_id,
+	      </if>
+	      <if test="searchWord != null" >
+	        search_word 
+	      </if>	
+	      
+      </trim>
+      <trim prefix="values (" suffix=")" suffixOverrides="," >
+      	  <if test="deviceToken != null" >
+	        #{deviceToken},
+	      </if>   
+	      <if test="mobile != null" >
+	        #{mobile},
+	      </if>        
+	      <if test="visitType != null" >
+	        #{visitType},
+	      </if>        
+	      <if test="action != null" >
+	        #{action},
+	      </if>        
+	      <if test="targetType != null" >
+	        #{targetType},
+	      </if>
+	      <if test="targetId != null" >
+	        #{targetId},
+	      </if>
+	      <if test="searchWord != null" >
+	        #{searchWord} 
+	      </if>
+	   
+     </trim>
+    </insert> 
+    
+     <!--查询登陆次数 -->
+        <select id="getLoginLogCountByIp" parameterType="java.lang.String" resultType="java.lang.Integer">
+    	SELECT
+			count(1) as count
+		FROM
+			t_user_login_log
+		WHERE
+		1 = 1
+		AND	ip = #{ip}
+		and create_time > DATE_SUB(NOW(), INTERVAL 1 HOUR);
+    </select>    
+</mapper>

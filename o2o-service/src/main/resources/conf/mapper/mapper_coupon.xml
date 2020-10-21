@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihomefnt.o2o.intf.dao.coupon.CashCouponDao">
+
+    <resultMap id="cashCouponResultMap" type="com.ihomefnt.o2o.intf.domain.coupon.doo.CashCouponDo">
+        <id property="couponId" column="idt_coupon"/>
+        <result property="couponName" column="coupon_name"/>
+        <result property="totalMoney" column="total_money"/>
+        <result property="payMoney" column="pay_money"/>
+        <result property="location" column="location"/>
+        <result property="remark" column="remark"/>
+        <result property="type" column="type"/>
+        <result property="isRead" column="is_read"/>
+        <result property="status" column="status"/>
+        <result property="createTimestamp" column="create_time"/>
+    </resultMap>
+    
+    <resultMap id="accountResultMap" type="com.ihomefnt.o2o.intf.domain.coupon.doo.CashAccountDo">
+        <result property="totalMoney" column="total_money"/>
+        <result property="usableMoney" column="usable_money"/>
+        <result property="freezeMoney" column="freeze_money"/>
+        
+    </resultMap>
+
+    <select id="queryCouponByUserId" parameterType="map" resultMap="cashCouponResultMap">
+        select 
+          tccd.idt_cash_coupon_detail idt_coupon,
+          tcc.coupon_name,
+          tcc.total_money,
+          tcc.pay_money,
+          tcc.coupon_name location,
+          tcc.remark,
+          tcc.type,
+          tccd.is_read,
+          tccd.status,
+          tccd.create_time
+        from r_account_coupon rac 
+        inner join t_account ta on rac.fid_account = ta.idt_account
+        inner join t_cash_coupon_detail tccd on rac.fid_coupon = tccd.idt_cash_coupon_detail
+        left join t_cash_coupon tcc on tccd.fid_coupon = tcc.idt_coupon
+        left join t_building tb on tcc.fid_building = tb.idt_building
+        where ta.user_id = #{userId}
+        <if test="isRead != null">
+			 and tccd.is_read=#{isRead}
+		</if>
+		order by tccd.create_time desc
+	</select>
+
+	<update id="updateStatus" parameterType="map">
+		UPDATE
+		t_cash_coupon_detail set is_read = 1 where idt_cash_coupon_detail =
+		#{couponId};
+	</update>
+
+	<update id="updateAccountPay" parameterType="map">
+		UPDATE t_account set
+		usable_money = usable_money - #{couponPay},
+		freeze_money = freeze_money
+		+ #{couponPay}
+		where user_id = #{userId};
+	</update>
+	<update id="revokeAccountPay" parameterType="map">
+		UPDATE t_account set
+		usable_money = usable_money + #{couponPay},
+		freeze_money = freeze_money
+		- #{couponPay}
+		where user_id = #{userId};
+	</update>
+	<update id="commitAccountPay" parameterType="map">
+		UPDATE t_account set
+		total_money = total_money - #{couponPay},
+		freeze_money = freeze_money -
+		#{couponPay}
+		where user_id = #{userId};
+	</update>
+
+	<update id="updateUsableMoney" parameterType="map">
+		UPDATE
+		t_cash_coupon set usable_money = #{usableMoney} where user_id =
+		#{userId} and coupon_code = #{couponCode};
+	</update>
+
+	<select id="queryCashAccount" parameterType="map" resultMap="accountResultMap">
+		select usable_money,total_money,freeze_money from t_account where
+		user_id = #{userId};
+	</select>
+
+	<resultMap id="allCouponsMap" type="com.ihomefnt.o2o.intf.domain.coupon.dto.CenterCouponDto">
+		<result property="couponId" column="idt_coupon" />
+		<result property="couponName" column="coupon_name" />
+		<result property="remark" column="remark" />
+		<result property="couponMoney" column="total_money" />
+		<result property="status" column="status" />
+		<result property="payMoney" column="pay_money"/>
+	</resultMap>
+
+	<select id="queryAllCoupons" resultMap="allCouponsMap" >
+		SELECT
+		t_cash_coupon.idt_coupon,
+		t_cash_coupon.coupon_name,
+		t_cash_coupon.remark,
+		t_cash_coupon.total_money,
+		t_cash_coupon.`status`,
+		t_cash_coupon.pay_money
+		FROM
+		t_cash_coupon
+		where type = 2
+	</select>
+	
+	<resultMap id="allVouchersMap" type="com.ihomefnt.o2o.intf.domain.coupon.dto.CenterCouponDto">
+		<result property="couponId" column="idt_voucher" />
+		<result property="couponName" column="name" />
+		<result property="couponDesc" column="activity_description" />
+		<result property="couponImage" column="logo" />
+		<result property="couponMoney" column="par_value" />
+		<result property="moneyLimitDesc" column="use_threshold" />
+		<result property="timeStart" column="use_begin_time" />
+		<result property="timeEnd" column="use_end_time" />
+		<result property="payMoney" column="actual_payment"/>
+		<result property="remark" column="use_description"/>
+		<result property="timeStartReceive" column="receive_begin_time"/>
+		<result property="timeEndReceive" column="receive_end_time"/>
+		<result property="purchaseLimitDesc" column="use_summary"/>
+	</resultMap>
+
+	<select id="queryAllVouchers" resultMap="allVouchersMap">
+		SELECT
+			t_voucher.idt_voucher,
+			t_voucher.logo,
+			t_voucher.`name`,
+			t_voucher.actual_payment,
+			t_voucher.par_value,
+			t_voucher.activity_description,
+			t_voucher.use_begin_time,
+			t_voucher.use_end_time,
+			t_voucher.use_threshold,
+			t_voucher.use_summary,
+			t_voucher.receive_begin_time,
+			t_voucher.receive_end_time,
+			t_voucher.use_description
+		from t_voucher
+		where t_voucher.use_end_time >= NOW()
+		and t_voucher.type = 2;
+	</select>
+	
+	
+	<select id="queryRemarkByVoucherId" parameterType="map" resultType="java.lang.String">
+		select use_description from t_voucher where idt_voucher = #{voucherId};
+	</select>
+	
+	
+	<select id="queryUseableCoupons" parameterType="map" resultMap="allCouponsMap">
+		select distinct
+			t_cash_coupon.idt_coupon,
+			t_cash_coupon.coupon_name,
+			t_cash_coupon.total_money,
+			t_cash_coupon.pay_money,
+			t_cash_coupon.remark,
+			t_cash_coupon_detail.`status`
+		from t_cash_coupon
+		LEFT JOIN t_cash_coupon_detail
+		on t_cash_coupon_detail.fid_coupon = t_cash_coupon.idt_coupon
+		where t_cash_coupon_detail.mobile = #{mobile} or
+		ISNULL(t_cash_coupon_detail.`status`) or t_cash_coupon_detail.`status` != 2;
+	</select>
+	
+	<resultMap id="allUseableVouchersMap" type="com.ihomefnt.o2o.intf.domain.coupon.dto.CenterCouponDto">
+		<result property="maxCount" column="pay_max" />
+		<result property="currentCount" column="mycount" />
+		<result property="couponId" column="idt_voucher" />
+		<result property="couponName" column="name" />
+		<result property="couponDesc" column="activity_description" />
+		<result property="couponImage" column="logo" />
+		<result property="couponMoney" column="par_value" />
+		<result property="moneyLimitDesc" column="use_threshold" />
+		<result property="timeStart" column="use_begin_time" />
+		<result property="timeEnd" column="use_end_time" />
+		<result property="payMoney" column="actual_payment"/>
+		<result property="remark" column="use_description"/>
+		<result property="timeStartReceive" column="receive_begin_time"/>
+		<result property="timeEndReceive" column="receive_end_time"/>
+		<result property="purchaseLimitDesc" column="use_summary"/>
+	</resultMap>
+	
+	<select id="queryUseableVouchers" parameterType="map" resultMap="allUseableVouchersMap">
+		select 
+	t_voucher.pay_max,
+	b.mycount,
+	t_voucher.idt_voucher,
+	t_voucher.logo,
+	t_voucher.`name`,
+	t_voucher.actual_payment,
+	t_voucher.par_value,
+	t_voucher.activity_description,
+	t_voucher.use_begin_time,
+	t_voucher.use_end_time,
+	t_voucher.use_threshold,
+	t_voucher.use_summary,
+	t_voucher.receive_begin_time,
+	t_voucher.receive_end_time,
+	t_voucher.use_description
+	from t_voucher
+	left join
+	(select fid_voucher,count(1) as mycount from t_voucher_detail where
+	customer_mobile = #{mobile} group by fid_voucher) b
+	on t_voucher.idt_voucher = b.fid_voucher
+	where t_voucher.use_end_time >= NOW()
+	and t_voucher.type = 2;
+	</select>
+	
+	<resultMap id="useableVouchersMap" type="com.ihomefnt.o2o.intf.domain.coupon.dto.CenterCouponDto">
+		<result property="maxCount" column="pay_max" />
+		<result property="currentCount" column="mycount" />
+	</resultMap>
+	
+	<select id="queryVoucherType" parameterType="map" resultMap="useableVouchersMap">
+		select 
+	t_voucher.pay_max,
+	b.mycount
+	from t_voucher
+	left join
+	(select fid_voucher,count(1) as mycount from t_voucher_detail where
+	customer_mobile = #{mobile} and status in (2,3,4,5) group by fid_voucher) b
+	on t_voucher.idt_voucher = b.fid_voucher 
+	where t_voucher.idt_voucher = #{couponId} and t_voucher.use_end_time >= NOW(); 
+		
+	</select>
+	
+	<insert id="insertVoucher" parameterType="map">
+		INSERT INTO t_voucher_detail (
+		fid_voucher,
+		customer_mobile,
+		STATUS,
+		create_time
+			)
+		VALUES
+	(#{couponId}, #{mobile}, 2, NOW())
+	</insert>
+
+</mapper>

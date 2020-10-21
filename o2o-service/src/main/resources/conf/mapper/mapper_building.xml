@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihomefnt.o2o.intf.dao.building.BuildingDao">
+
+	<resultMap id="buildingResultMap" type="com.ihomefnt.o2o.intf.domain.building.doo.Building">
+		<id property="idtBuilding" column="idt_building" />
+		<result property="name" column="name" />
+		<result property="developer" column="description" />
+	</resultMap>
+	<select id="queryBuildingByHouseId" resultMap="buildingResultMap" parameterType="java.lang.Long">
+	SELECT b.idt_building,b.name,b.developer FROM r_building_house AS bh	LEFT JOIN t_building AS b  ON bh.fid_building=b.idt_building WHERE fid_house=#{houseId}
+	</select>
+	
+	<select id="queryBuildingById" resultMap="buildingResultMap" parameterType="java.lang.Long">
+		SELECT b.idt_building,b.name,b.developer FROM t_building AS b WHERE b.idt_building = #{buildingId}
+	</select>
+
+</mapper>

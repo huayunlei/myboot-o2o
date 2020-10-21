@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihomefnt.o2o.intf.dao.partners.PartnersDao">
+
+	<insert id="enrollPartners" parameterType="com.ihomefnt.o2o.intf.domain.partners.dto.TPartners"
+	    useGeneratedKeys="true" keyProperty="id">
+		replace INTO t_partners(mobile, name, vocation,fid_area, fid_building, create_time,age)
+		VALUES (#{mobile},#{name},#{vocation},#{areaId},#{buildingId},now(),#{age})
+	</insert>
+		
+	<select id="queryEnrollList" resultType="java.lang.String">
+		SELECT mobile FROM t_partners  order by create_time desc
+	</select>
+
+	<select id="queryEnrollByMobile" resultType="java.lang.String" parameterType="java.lang.String">
+		SELECT mobile FROM t_partners  where mobile=#{mobile}
+	</select>
+
+	<resultMap id="areaResultMap" type="com.ihomefnt.o2o.intf.domain.partners.dto.Area">
+		<result property="areaId" column="area_id" />
+		<result property="areaName" column="area_name" />
+		<collection property="buildingList" resultMap="buildingResultMap" />
+	</resultMap>
+
+	<resultMap id="buildingResultMap" type="com.ihomefnt.o2o.intf.domain.partners.dto.Building">
+		<result property="buildingId" column="building_id" />
+		<result property="buildingName" column="building_name" />
+	</resultMap>
+	
+	<select id="queryAreaBuilding" resultMap="areaResultMap" parameterType="map">
+		SELECT 
+			tab.fid_area area_id,
+			ta.area_name area_name,
+			tab.building_id building_id,
+			tab.building_name building_name
+		FROM t_area_building tab, t_areas ta
+		WHERE tab.fid_area  = ta.idt_areas
+		<if test="cityCode != null">
+             AND ta.zipcode=#{cityCode}
+		</if>		 
+		<if test="areaId != null">
+             AND tab.fid_area = #{areaId}
+		</if>
+		<if test="buildingId != null">
+             AND tab.building_id = #{buildingId}
+		</if>
+		order by fid_area asc,building_id asc	
+	</select>
+</mapper>

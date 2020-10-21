@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihomefnt.o2o.intf.dao.house.ModelRoomDao">
+
+<!-- 获取h5 3v家列表信息 -->
+<resultMap id="modelRoomResultMap" type="com.ihomefnt.o2o.intf.domain.house.dto.ModelRoomDto">
+    <id property="expId" column="id"/>
+	<result property="expName" column="expName"/>
+	<result property="expImage" column="expImages"/>
+	<result property="expDec" column="description"/>
+	<collection property="houstList" resultMap="modelHouseResultMap"></collection>
+</resultMap>
+<resultMap id="modelHouseResultMap" type="com.ihomefnt.o2o.intf.domain.house.dto.ModelHouseDto" >
+	<id property="houseId" column="idt_house"/>
+	<result property="houseName" column="houseName"/>
+	<result property="houseSize" column="size"/>
+	<result property="houseImage" column="houseImages"/>
+	<result property="houseRoom" column="room"/>
+	<result property="houseLiving" column="living"/>
+	<result property="houseToilet" column="toilet"/>
+	<result property="houseBalcony" column="balcony"/>
+	<result property="houseKitchen" column="kitchen"/>
+	<collection property="suitDtoList" resultMap="modelSuitResultMap"></collection>
+</resultMap>
+<resultMap id="modelSuitResultMap" type="com.ihomefnt.o2o.intf.domain.house.dto.ModelSuitDto">
+	<id property="suitId" column="idt_suit"/>
+	<result property="suitName" column="suitName"/>
+	<result property="suitStyleName" column="styleName"/>
+	<result property="suitImage" column="suitImages"/>
+	<result property="suit3VHomeImage" column="panorama_3d_url"/>
+</resultMap>
+
+<select id="queryModelRoomList" parameterType="com.ihomefnt.o2o.intf.domain.house.vo.request.HttpModeRoomRequest" resultMap="modelRoomResultMap">
+ SELECT
+  	tes.id,
+	tes. NAME as expName,
+	tes.images as expImages,
+	tes.description,
+  th.idt_house,
+	th. NAME as houseName,
+	th.size,
+	th.normal_pic as houseImages,
+	th.room,
+	th.living,
+	th.toilet,
+	th.balcony,
+	th.kitchen,
+  ts.idt_suit,
+	ts. NAME as suitName,
+	tsy. NAME as styleName,
+	ts.images as suitImages,
+	ts.panorama_3d_url
+FROM
+	t_exper_store tes,
+	r_building_store rbs,
+	r_building_house rbh,
+	t_house th,
+	r_house_suit rhs,
+	t_suit ts
+LEFT JOIN t_style tsy on tsy.idt_style = ts.fid_style
+WHERE tes.id = rbs.id_store
+and tes.id = #{expId}
+AND rbs.id_building = rbh.fid_building
+AND rbh.fid_house = th.idt_house
+AND th.idt_house = rhs.fid_house
+AND rhs.fid_suit = ts.idt_suit
+AND ts.panorama_3d_url != ''
+</select>
+
+<select id="queryModelRoomNum" parameterType="com.ihomefnt.o2o.intf.domain.house.vo.request.HttpModeRoomRequest" resultType="java.lang.Integer">
+	SELECT
+	COUNT(1)
+FROM
+	t_exper_store tes,
+	r_building_store rbs,
+	r_building_house rbh,
+	t_house th,
+	r_house_suit rhs,
+	t_suit ts,
+	t_style tsy
+WHERE
+	tes.id = rbs.id_store
+and tes.id = #{expId}
+AND rbs.id_building = rbh.fid_building
+AND rbh.fid_house = th.idt_house
+AND th.idt_house = rhs.fid_house
+AND rhs.fid_suit = ts.idt_suit
+AND tsy.idt_style = ts.fid_style
+AND ts.off_line_experience = 1
+</select>
+
+<select id="queryModelRoomInfo" parameterType="com.ihomefnt.o2o.intf.domain.house.vo.request.HttpModeRoomRequest" resultMap="modelRoomResultMap">
+	select name as expName,
+		images as expImages,
+		description as description
+ from t_exper_store where id = #{expId}
+</select>
+</mapper>

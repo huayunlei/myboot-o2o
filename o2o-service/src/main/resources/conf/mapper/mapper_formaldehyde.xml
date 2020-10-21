@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihomefnt.o2o.intf.dao.formaldehyde.FormaldehydeDao">
+
+	<insert id="enrollFormaldehyde" parameterType="com.ihomefnt.o2o.intf.domain.formaldehyde.dto.TFormaldehyde"
+	    useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_formaldehyde(mobile, name, address,room, living, appoint_time)
+		VALUES (#{mobile},#{name},#{address},#{room},#{living},#{appointTime})
+	</insert>
+		
+	<select id="queryFormaldehyde" resultType="java.lang.String">
+		SELECT mobile FROM t_formaldehyde  order by create_time desc
+	</select>
+
+</mapper>

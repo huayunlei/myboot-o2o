@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihomefnt.o2o.intf.dao.tkdm.TKDMDao">
+    <resultMap id="resultTKDMap" type="com.ihomefnt.o2o.intf.domain.tkdm.dto.TKDMSeo">
+        <result property="seoKey" column="seo_key"/>
+        <result property="title" column="title"/>
+        <result property="keyword" column="keyword"/>
+        <result property="description" column="description"/>
+    </resultMap>
+    <select id="queryTkdm" resultMap="resultTKDMap" parameterType="map">
+        SELECT * from t_seo_tkd_m where seo_key = #{seo_key};
+    </select>
+    
+</mapper>

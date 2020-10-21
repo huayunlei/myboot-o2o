@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihomefnt.o2o.intf.dao.product.WishListDao">
+
+    <resultMap id="wishlistResultMap" type="com.ihomefnt.o2o.intf.domain.product.doo.TWishList">
+        <id property="wishListId" column="wish_list_id"/>
+        <result property="userId" column="userId"/>
+        <result property="wishProductName" column="wish_product_name"/>
+        <result property="wishProductBrand" column="wish_product_brand"/>
+        <result property="wishProductUrl" column="wish_product_url"/>
+        <result property="wishProductRequest" column="wish_product_requeest"/>
+        <result property="submitTime" column="submit_time"/>
+    </resultMap>
+    <select id = "queryAllWishList" parameterType="map" resultMap="wishlistResultMap">
+        select * from t_wish_list where userId =#{userId} order by submit_time desc
+    </select>
+
+    <insert id="addWishList" parameterType="com.ihomefnt.o2o.intf.domain.product.doo.TWishList"
+            useGeneratedKeys="true" keyProperty="wishListId">
+        INSERT into t_wish_list(userId, wish_product_name, wish_product_brand,
+        wish_product_url, wish_product_request, submit_time)
+        VALUES (#{userId},#{wishProductName},#{wishProductBrand},#{wishProductUrl},
+        #{wishProductRequest},#{submitTime})
+    </insert>
+
+</mapper>

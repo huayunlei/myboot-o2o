@@ -1,0 +1,2030 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihomefnt.o2o.intf.dao.product.ProductDao">
+
+	<resultMap id="suitResultMap"
+		type="com.ihomefnt.o2o.intf.domain.product.doo.CompositeProduct">
+		<id property="compositeProductId" column="idt_suit" />
+		<result property="name" column="name" />
+		<result property="price" column="price" />
+		<result property="saleOff" column="deal" />
+		<result property="isShowDeal" column="is_show_deal" />
+		<result property="designFeatures" column="feature" />
+		<result property="brief" column="brief" />
+		<result property="pictureUrlOriginal" column="images" />
+
+		<result property="latitude" column="latitude" />
+		<result property="longitude" column="longitude" />
+		<result property="experienceAddress" column="location" />
+		<result property="buildingId" column="fid_building" />
+
+		<result property="room" column="room" />
+		<result property="living" column="living" />
+		<result property="balcony" column="balcony" />
+		<result property="toilet" column="toilet" />
+		<result property="kitchen" column="kitchen" />
+		<result property="size" column="size" />
+		<result property="style" column="style" />
+		<result property="count" column="count" />
+		
+		<result property="saleCount" column="sale_count" />
+
+		<result property="designerImg" column="designer_image" />
+		<result property="designerName" column="designer_name" />
+        <result property="designerId" column="fid_designer"/>
+        <result property="fullView3d" column="panorama_3d_url"/>
+
+	</resultMap>
+	<resultMap id="suitMap"
+		type="com.ihomefnt.o2o.intf.domain.product.doo.SuitProduct110">
+		<id property="compositeProductId" column="idt_suit" />
+		<result property="name" column="name" />
+		<result property="price" column="price" />
+		<result property="saleOff" column="deal" />
+		<result property="isShowDeal" column="is_show_deal" />
+		<result property="designFeatures" column="feature" />
+		<result property="pictureUrlOriginal" column="images" />
+
+		<result property="latitude" column="latitude" />
+		<result property="longitude" column="longitude" />
+		<result property="experienceAddress" column="location" />
+
+		<result property="room" column="room" />
+		<result property="living" column="living" />
+		<result property="balcony" column="balcony" />
+		<result property="toilet" column="toilet" />
+		<result property="kitchen" column="kitchen" />
+		<result property="size" column="size" />
+		<result property="style" column="style" />
+		<result property="count" column="count" />
+
+		<result property="designerImg" column="designer_image" />
+		<result property="designerName" column="designer_name" />
+		<result property="houseImgs" column="house_imgs" />
+
+	</resultMap>
+
+
+	<resultMap id="productInfoResutMap"
+		type="com.ihomefnt.o2o.intf.domain.product.doo.ProductInfomation">
+
+		<id property="productId" column="idt_product" />
+		<result property="name" column="name" />
+		<result property="pictureUrlOriginal" column="images" />
+		<result property="priceCurrent" column="price" />
+		<result property="priceMarket" column="price_market" />
+        <result property="sales" column="sales" />
+		<!-- TODO: need re calculate this model item -->
+		<result property="productModel" column="model" />
+		<result property="serialNo" column="serial_no" />
+		<result property="standardLong" column="length" />
+		<result property="standardWidth" column="width" />
+		<result property="standardHigh" column="height" />
+		<result property="feature" column="feature" />
+		<result property="brand" column="brand" />
+		<result property="madeIn" column="origin" />
+		<result property="graphicDescription" column="description" />
+		<result property="secondContentsName" column="product_type" />
+		<result property="status" column="status"/>
+		<result property="productAttrJson" column="productAttr_json"/>
+		<result property="productType" column="fid_product_type"/>
+		<result property="priceHide" column="price_hide"/>
+	</resultMap>
+
+	<resultMap id="productSummaryMap"
+		type="com.ihomefnt.o2o.intf.domain.product.doo.ProductSummary">
+		<id property="productId" column="idt_product" />
+		<result property="name" column="name" />
+		<result property="pictureUrlOriginal" column="images" />
+		<result property="priceCurrent" column="price" />
+		<result property="priceMarket" column="price_market" />
+		<result property="firstContentsName" column="room" />
+		<result property="roomType" column="room_type" />
+		<result property="secondContentsName" column="product_type" />
+		<result property="productCount" column="product_count" />
+		<result property="roomImages" column="room_images" />
+		<result property="roomPrice" column="room_price" />
+		<result property="status" column="status" />
+		<result property="typeKey" column="fid_product_type" />
+		<result property="roomId" column="fid_room" />
+		<result property="priceHide" column="price_hide" />
+		<result property="productAttrJson" column="productAttr_json" />
+	</resultMap>
+
+	<resultMap id="suitProductMap"
+		type="com.ihomefnt.o2o.intf.domain.product.doo.CompositeSingleRelation">
+		<id property="productId" column="idt_product" />
+		<result property="productCount" column="count" />
+		<result property="priceCurrent" column="price" />
+	</resultMap>
+
+	<resultMap id="houseSuitProductMap"
+		type="com.ihomefnt.o2o.intf.domain.product.doo.HouseSuitProduct">
+		<id property="houseId" column="idt_house" />
+		<result property="houseName" column="house_name" />
+		<result property="pictureUrlHouse" column="house_imgs" />
+		<result property="houseSize" column="size" />
+		<result property="cityCode" column="city_code" />
+		<result property="price" column="price" />
+		<result property="lowestPrice" column="lowestPrice" />
+		<result property="highestPrice" column="highestPrice" />
+		<result property="deal" column="deal" />
+		<result property="isShowDeal" column="is_show_deal" />
+		<result property="compositeProductId" column="idt_suit" />
+		<result property="experienceAddress" column="location" />
+		<result property="latitude" column="latitude" />
+		<result property="longitude" column="longitude" />
+		<result property="size" column="size" />
+		<result property="count" column="count" />
+
+	</resultMap>
+
+	<resultMap id="suit2ProductMap" type="com.ihomefnt.o2o.intf.domain.product.doo.SuitProduct">
+		<id property="suitId" column="idt_suit" />
+		<result property="images" column="images" />
+		<result property="offLineExperience" column="off_line_experience" />
+		<result property="createTime" column="createTime" />
+		<result property="style" column="style" />
+	</resultMap>
+	
+	<resultMap id="previewResultMap"
+		type="com.ihomefnt.o2o.intf.domain.product.doo.SearchResult">
+		<id property="sid" column="sid" />
+		<result property="name" column="name" />
+		<result property="price" column="price" />
+		<result property="priceMarket" column="price_market" />
+		<result property="image" column="images" />
+		<result property="productCount" column="product_count" />
+		<result property="size" column="size" />
+		<result property="suitName" column="suit_name" />
+		<result property="roomTypeKey" column="room_type" />
+	</resultMap>
+	
+	<!-- 旧版套装 -->
+	<!--select id="querySuitForPreview" parameterType="map" resultMap="previewResultMap">
+		SELECT sid,name,price,images FROM (
+		select ts.idt_suit sid,ts.name,ts.create_time,ts.status,ts.price,ts.images,ta.zipcode,ts.weight_value from t_suit ts
+            left join r_house_suit rhs on ts.idt_suit = rhs.fid_suit
+            left join r_building_house rbh on rhs.fid_house = rbh.fid_house
+            left join t_building tb on rbh.fid_building = tb.idt_building
+            left join t_areas ta on tb.fid_district = ta.idt_areas) ss
+		WHERE status=1 
+		<if test="searchWord != null">
+			AND name like CONCAT('%','${searchWord}','%' )
+	    </if>
+	    <if test="cityCode != null">
+			AND zipcode like CONCAT('%','${cityCode}','%' )
+	    </if>
+	    ORDER BY weight_value DESC ,create_time DESC
+		LIMIT 0,#{count}
+	</select-->
+	<!--  select id="querySuitForResult" resultMap="suitListResultMap" parameterType="map">
+			SELECT 
+				CONCAT(
+				CASE WHEN th.room > 0 THEN th.room ELSE '' END,
+				CASE WHEN th.room > 0 THEN '房' ELSE ''  END,	
+				CASE WHEN th.living > 0 THEN th.living ELSE '' END,
+				CASE WHEN th.living > 0 THEN '厅' ELSE ''  END,		
+				CASE WHEN th.toilet > 0 THEN th.toilet ELSE '' END,
+				CASE WHEN th.toilet > 0 THEN '卫' ELSE ''  END
+				) house_name,
+				th.size,
+				ts.idt_suit suit_id,
+				ts.name suit_name,
+				ts.images suit_images,
+				tt.name style_name,
+				ts.price,
+				ts.status,
+				td.avatar,
+				ROUND(ts.price/(SELECT SUM( tp.price_market) FROM r_suit_room rsr,t_suit_room tr, t_product tp WHERE rsr.fid_suit=ts.idt_suit AND rsr.fid_room = tr.idt_room AND FIND_IN_SET(tp.idt_product,REPLACE(REPLACE(tr.product_order,']',''),'[',''))),1)*10 discount
+			FROM t_building tb,
+				r_building_house rbh,
+				t_house th,
+				r_house_suit rhs,
+				t_suit ts , 
+				t_style tt,
+				t_user tu,
+				t_areas ta,
+				t_designer td
+			WHERE tb.idt_building = rbh.fid_building
+				AND rbh.fid_house = th.idt_house
+				AND th.idt_house = rhs.fid_house
+				AND rhs.fid_suit = ts.idt_suit
+				AND ts.fid_style = tt.style_key
+				AND ts.fid_designer = tu.u_id
+				AND tu.mobile = td.mobile
+				AND tb.fid_district = ta.idt_areas
+				AND ts.status=1
+			<if test="searchWord != null">
+				AND ts.name like CONCAT('%','${searchWord}','%' )
+			</if>
+			<if test="cityCode != null">
+				AND ta.zipcode like CONCAT('%','${cityCode}','%' )
+		    </if>
+			ORDER BY ts.weight_value DESC,ts.create_time DESC
+			
+			limit #{from},#{size}
+		</select-->
+	
+	<!--select id="querySuitResultCount" parameterType="map" resultType="java.lang.Integer">
+		SELECT 
+			count(1) as count
+		FROM t_building tb,
+			r_building_house rbh,
+			t_house th,
+			r_house_suit rhs,
+			t_suit ts , 
+			t_style tt,
+			t_areas ta
+		WHERE tb.idt_building = rbh.fid_building
+			AND rbh.fid_house = th.idt_house
+			AND th.idt_house = rhs.fid_house
+			AND rhs.fid_suit = ts.idt_suit	
+			AND ts.fid_style = tt.style_key
+			AND tb.fid_district = ta.idt_areas
+			AND ts.status=1
+		<if test="searchWord != null">
+			AND ts.name like CONCAT('%','${searchWord}','%' )
+		</if>
+		<if test="cityCode != null">
+			AND ta.zipcode like CONCAT('%','${cityCode}','%' )
+	    </if>
+	</select-->	
+	
+	<!-- 新版套装 -->
+	<select id="querySuitIdListForPreview" parameterType="map" resultType="java.lang.Long">
+		SELECT distinct fid_suit FROM t_search_suit_value
+		WHERE 1=1 
+		<if test="searchWord != null">
+		AND  tag_value LIKE CONCAT('%','${searchWord}','%' ) 
+	    </if>
+	    ORDER BY weight_value DESC ,create_time DESC
+		LIMIT #{from},#{count}
+	</select>	
+	
+	<select id="querySuitForPreview" parameterType="map" resultMap="previewResultMap">
+		SELECT idt_search_suit AS sid,NAME ,price,image AS images FROM t_search_suit
+		WHERE 1=1 
+		<if test="suitIdList != null" >
+        	AND idt_search_suit in
+            <foreach collection="suitIdList" item="item" index="index" open="(" close=")" separator=",">
+            	#{item}
+            </foreach>
+        </if>
+        ORDER BY weight_value DESC
+	</select>
+	
+	<select id="querySuitForResult" resultMap="suitListResultMap" parameterType="map">
+		SELECT idt_search_suit AS suit_id,NAME as suit_name,price,image AS suit_images ,house_name,product_count,size,style_name FROM t_search_suit
+		WHERE 1=1 
+		<if test="suitIdList != null" >
+        	AND idt_search_suit in
+            <foreach collection="suitIdList" item="item" index="index" open="(" close=")" separator=",">
+            	#{item}
+            </foreach>
+        </if>
+        ORDER BY weight_value DESC
+	</select>
+	
+    <select id="querySuitResultCount" parameterType="map" resultType="java.lang.Integer">
+		SELECT count(distinct fid_suit) as count FROM t_search_suit_value
+		WHERE 1=1 
+		<if test="searchWord != null">
+		AND  tag_value LIKE CONCAT('%','${searchWord}','%' ) 
+	    </if>
+	</select>	
+	
+	
+	<!-- 旧版 商品-->
+    <!-- select id="querySingleForPreview" parameterType="map" resultMap="previewResultMap">
+		SELECT idt_product sid,name,price,images FROM t_product 
+		WHERE status=1 
+		<if test="searchWord != null">
+			AND name like CONCAT('%','${searchWord}','%' )
+	    </if>
+	    ORDER BY weight_value DESC ,create_time DESC
+		LIMIT 0,#{count}
+	</select -->
+	
+	<!--  select id="querySingleForResult" parameterType="map"
+		resultMap="productSummaryMap">
+		SELECT
+		p.idt_product idt_product,
+		p.name name,
+		p.images images,
+		p.price price,
+		p.price_market price_market,
+		p.fid_product_type fid_product_type,
+		p.weight_value weight_value,
+		p.create_time create_time,
+		p.status status
+		FROM
+		t_product p left join
+		(select product_id ,sum(product_amount) product_amount 
+		from t_order_details GROUP BY product_id) tod
+		on p.idt_product = tod.product_id
+		<if test="filter == 3 or filter == 4">
+		    left join t_series s on p.fid_series=s.id
+		</if>
+		where p.status=1
+		<if test="searchWord != null">
+		    AND p.name like CONCAT('%','${searchWord}','%' )
+		</if>
+		<if test="filter == 3 or filter == 4">
+		    AND (s.price_hide=0 or s.price_hide is null)
+		</if>
+		<if test="filter == 1">
+			ORDER BY weight_value DESC ,create_time DESC
+		</if>
+		<if test="filter == 2">
+			ORDER BY tod.product_amount DESC ,create_time DESC
+		</if>
+		<if test="filter == 3">
+			ORDER BY price ASC ,create_time DESC
+		</if>
+		<if test="filter == 4">
+			ORDER BY price DESC ,create_time DESC
+		</if>
+		<if test="filter == null">
+			ORDER BY create_time DESC
+		</if>
+		LIMIT #{from},#{size}
+	</select-->
+	
+	<!--  select id="querySingleCount" parameterType="map" resultType="java.lang.Long">
+		SELECT count(1)
+		FROM t_product p
+		<if test="filter == 3 or filter == 4">
+		    left join t_series s on p.fid_series=s.id
+		</if>
+		where p.status=1
+		<if test="searchWord != null">
+		    AND p.name like CONCAT('%','${searchWord}','%' )
+		</if>
+		<if test="filter == 3 or filter == 4">
+		    AND (s.price_hide=0 or s.price_hide is null)
+		</if>
+	</select-->	
+	
+	<!-- 新版 商品-->	
+	<select id="querySingleIdListForPreview" parameterType="map" resultType="java.lang.Long">
+		SELECT distinct fid_product FROM t_search_product_value
+		WHERE 1=1 
+		<if test="searchWord != null">
+		AND  tag_value LIKE CONCAT('%','${searchWord}','%' ) 
+	    </if>
+ 		<if test="filter == 1">
+			ORDER BY weight_value DESC ,create_time desc
+		</if>
+		<if test="filter == 2">
+			ORDER BY sel_amount DESC ,create_time desc
+		</if>
+		<if test="filter == 3">
+			ORDER BY price ASC,create_time desc
+		</if>
+		<if test="filter == 4">
+			ORDER BY price DESC ,create_time desc
+		</if>
+		LIMIT #{from},#{count}
+	</select>
+	
+	<select id="querySingleCount" parameterType="map" resultType="java.lang.Long">
+		SELECT count(distinct fid_product) FROM t_search_product_value
+		WHERE 1=1 
+		<if test="searchWord != null">
+		AND  tag_value LIKE CONCAT('%','${searchWord}','%' ) 
+	    </if>
+	</select>
+		
+    <select id="querySingleForPreview" parameterType="map" resultMap="previewResultMap">
+		SELECT idt_search_product AS sid,NAME,price,image AS images,price_market FROM t_search_product
+		WHERE 1=1 
+		<if test="singleIdList != null" >
+        	AND idt_search_product in
+            <foreach collection="singleIdList" item="item" index="index" open="(" close=")" separator=",">
+            	#{item}
+            </foreach>
+        </if>
+ 		<if test="filter == 1">
+			ORDER BY weight_value DESC 
+		</if>
+		<if test="filter == 2">
+			ORDER BY sel_amount DESC
+		</if>
+		<if test="filter == 3">
+			ORDER BY price ASC
+		</if>
+		<if test="filter == 4">
+			ORDER BY price DESC 
+		</if>      
+	</select>	
+	
+	<!-- 旧版 空间-->	
+    <!--select id="queryRoomForPreview" parameterType="map" resultMap="previewResultMap">
+
+		SELECT room.idt_room sid,room.name,room.room_price price,room.images FROM t_suit_room  room
+		INNER JOIN r_suit_room rsr ON room.idt_room=rsr.fid_room
+		INNER JOIN t_suit suit ON  rsr.fid_suit=suit.idt_suit
+		WHERE suit.status=1  AND room.room_price >0
+		<if test="searchWord != null">
+			AND room.name like CONCAT('%','${searchWord}','%' )
+	    </if>
+	    ORDER BY room.weight_value DESC,room.create_time DESC
+		LIMIT 0,#{count}
+	</select-->	
+	
+	<select id="queryRoomIdListForPreview" parameterType="map" resultType="java.lang.Long">
+		SELECT distinct fid_room FROM t_search_room_value
+		WHERE 1=1 
+		<if test="searchWord != null">
+		AND  tag_value LIKE CONCAT('%','${searchWord}','%' ) 
+	    </if>
+		<if test="roomtypeList != null" >
+        	OR tag_value in
+            <foreach collection="roomtypeList" item="item" index="index" open="(" close=")" separator=",">
+            	#{item}
+            </foreach>
+        </if>	    
+	    ORDER BY weight_value DESC ,create_time DESC
+		LIMIT #{from},#{count}
+	</select>
+	
+    <select id="queryRoomResultCount" parameterType="map" resultType="java.lang.Integer">
+		SELECT count(distinct fid_room) as count FROM t_search_room_value
+		WHERE 1=1 
+		<if test="searchWord != null">
+		AND  tag_value LIKE CONCAT('%','${searchWord}','%' ) 
+	    </if>
+		<if test="roomtypeList != null" >
+        	OR tag_value in
+            <foreach collection="roomtypeList" item="item" index="index" open="(" close=")" separator=",">
+            	#{item}
+            </foreach>
+        </if>	
+	</select>		
+		
+    <select id="queryRoomForPreview" parameterType="map" resultMap="previewResultMap">
+		SELECT idt_search_room AS sid,NAME,price,image AS images,product_count,size,suit_name,room_type  FROM t_search_room
+		WHERE 1=1 
+		<if test="roomIdList != null" >
+        	AND idt_search_room in
+            <foreach collection="roomIdList" item="item" index="index" open="(" close=")" separator=",">
+            	#{item}
+            </foreach>
+        </if>
+        ORDER BY weight_value DESC
+	</select>	
+	
+	<select id="queryProductforWeight" parameterType="map"
+		resultType="map">
+		SELECT
+		  p.idt_product pid,
+		  p.name name,
+		  p.images images,
+		  p.fid_brand brand,
+		  p.purchase_price purchaseprice,
+		  p.factory_version factoryversion,
+		  p.description description,
+		  tod.product_amount amount
+		FROM
+		  t_product p left join
+		  (select product_id, sum(product_amount) product_amount 
+		   from t_order_details 
+		   where order_id in (select order_id from t_order where order_status = 2 or order_status = 5) 
+		   GROUP BY product_id) tod
+		  on p.idt_product = tod.product_id
+	</select>
+	
+	<select id="updateWeightValue" parameterType="map"
+		resultType="java.lang.Integer">
+		UPDATE t_product SET
+		  weight_value = ${weightValue}
+		WHERE
+		  idt_product = ${pid}
+	</select>
+	
+	<select id="queryRecommendkey" parameterType="map" resultType="java.lang.String">
+		SELECT key_name FROM t_recommend_key 
+	</select>
+	
+
+	
+	
+
+
+	<select id="querySuit" parameterType="map" resultMap="suitResultMap">
+
+		SELECT mtfinal.*,rsp.count as count from
+		(
+		SELECT
+		mtsdthh.*,mthb.fid_building,mthb.building_name,location,latitude,longitude
+		FROM
+		(
+		SELECT mtsdth.*, t_house.name as house_name, size, room,
+		living,balcony,toilet,kitchen from
+
+		(SELECT mtsdt.*, fid_house from
+
+		(SELECT mtsi.*, t_user.name as designer from
+		(SELECT t_suit.*,t_style.name as style FROM t_suit LEFT JOIN t_style on
+		t_suit.fid_style = t_style.style_key where t_suit.status=1 ) mtsi		
+		LEFT JOIN t_user ON mtsi.fid_designer = t_user.u_id
+		LEFT JOIN t_designer ON t_user.mobile = t_designer.mobile				
+		) mtsdt
+
+		left JOIN
+
+		(SELECT fid_suit,fid_house from r_house_suit) mtsh
+
+		on mtsh.fid_suit = mtsdt.idt_suit) mtsdth
+		LEFT JOIN t_house ON mtsdth.fid_house=t_house.idt_house
+		) mtsdthh
+		LEFT JOIN
+		(
+		SELECT fid_house,fid_building, tb.name as building_name,
+		location,latitude,longitude
+		from (SELECT fid_house,fid_building from r_building_house) rbh LEFT JOIN
+		t_building tb ON rbh.fid_building=tb.idt_building
+		) mthb on mthb.fid_house = mtsdthh.fid_house
+		) mtfinal left JOIN
+		(
+		SELECT rsr.fid_suit AS fid_suit, SUM(rrpp.product_count) AS COUNT
+		FROM(
+		SELECT rrp.fid_room,rrp.product_count FROM r_room_product rrp INNER JOIN
+		t_product tp ON rrp.fid_product=tp.idt_product WHERE tp.status=1 and
+		tp.price >0) rrpp
+		LEFT JOIN r_suit_room rsr ON rrpp.fid_room = rsr.fid_room
+		GROUP BY rsr.fid_suit
+		) rsp
+		on rsp.fid_suit = mtfinal.idt_suit ORDER BY mtfinal.size
+		ASC,mtfinal.create_time ASC limit 0, #{count}
+	</select>
+
+	<select id="queryHomeSingleProduct" parameterType="map"
+		resultMap="productSummaryMap">
+
+		SELECT m.*,t_product_type.name as product_type from
+		(
+		SELECT
+		mtp.*,
+		t_suit_room.name AS room
+		FROM
+		(SELECT
+		idt_product,
+		fid_room,
+		t_product.name,
+		images,
+		price,
+		price_market,
+		fid_product_type,
+		r_room_product.product_count
+		FROM t_product
+		LEFT JOIN r_room_product ON idt_product = fid_product
+		WHERE status = 1
+		AND t_product.idt_product in (303,285,326,359,270,310)
+		ORDER BY update_time DESC
+		LIMIT 0, #{count}) mtp LEFT JOIN t_suit_room ON fid_room = idt_room
+		) m LEFT JOIN t_product_type ON t_product_type.type_key =
+		fid_product_type
+		ORDER BY FIND_IN_SET (m.idt_product,'303,285,326,359,270,310')
+	</select>
+
+	<select id="queryProductByPage" parameterType="map"
+		resultMap="productSummaryMap">
+		SELECT m.*,t.name as product_type from
+		(
+		SELECT mtp.*,t_suit_room.name as room FROM (SELECT
+		idt_product,fid_room, name, images,price,price_market,fid_product_type,product_count
+		from t_product LEFT JOIN r_room_product ON idt_product=fid_product
+		WHERE status = 1 AND t_product.images IS NOT NULL  AND t_product.images !='' ORDER BY update_time DESC limit #{size},#{pageSize}) mtp
+		LEFT JOIN t_suit_room ON fid_room=idt_room) m LEFT JOIN t_product_type t ON
+		t.type_key = fid_product_type;
+	</select>
+
+	<select id="queryProductCount" resultType="java.lang.Long">
+		select count(*) as count from t_product where status=1
+	</select>
+
+	<select id="queryProductById" parameterType="map"
+		resultMap="productInfoResutMap">
+		SELECT mtps.idt_product,
+		mtps.name,
+		mtps.images,
+		mtps.price,
+		mtps.price_market,
+		mtps.model,
+		mtps.length,
+		mtps.width,
+		mtps.height,
+		mtps.feature,
+		mtps.origin,
+		mtps.description,
+		mtps.status,
+		mtps.fid_product_type,
+		ps.sales,
+		mtps.productAttr_json productAttr_json,
+		LPAD(mtps.serial_no, 6, 0) AS serial_no,
+		t_series.price_hide,
+		t_brand.name AS brand from
+		(select * from t_product LEFT JOIN t_specification on fid_specification =
+		t_specification.idt_specification
+		where idt_product= #{productId}) mtps LEFT JOIN t_brand ON
+		mtps.fid_brand = t_brand.idt_brand
+		left join t_series on mtps.fid_series = t_series.id
+		left join (select product_id,sum(product_amount) sales 
+		  from t_order_details group by product_id) ps 
+		  on mtps.idt_product = ps.product_id
+	</select>
+
+	<select id="queryCompositeSingle" parameterType="map"
+		resultMap="productSummaryMap">
+		SELECT DISTINCT m.*,t.name as product_type from
+		(
+		SELECT mtp.*, t_suit_room.name as room,t_suit_room.room_type,t_suit_room.images AS room_images,t_suit_room.room_price FROM
+
+		( SELECT mtsp.fid_product as idt_product,mtsp.fid_room,mtsp.fid_suit,
+		tp.name,tp.images,
+		tp.price,tp.price_market,tp.fid_product_type,mtsp.product_count
+		FROM
+		(SELECT mtrsr.fid_room,mtrsr.fid_suit,mtrrp.fid_product,mtrrp.product_count
+		FROM
+		(select * FROM r_suit_room WHERE fid_suit = #{compositeProductId}) mtrsr LEFT
+		JOIN
+		(SELECT * FROM r_room_product) mtrrp ON mtrsr.fid_room = mtrrp.fid_room) mtsp
+
+		INNER JOIN t_product tp ON mtsp.fid_product = tp.idt_product where
+		tp.status=1 and tp.price >0) mtp
+
+		INNER JOIN t_suit_room ON t_suit_room.idt_room = mtp.fid_room) m INNER JOIN
+		t_product_type t ON t.type_key = fid_product_type
+		ORDER BY m.fid_room ASC
+	</select>
+
+	<select id="queryProductSummary" parameterType="map"
+		resultMap="productSummaryMap">
+
+		SELECT m.*,t.name as product_type from
+		(
+		SELECT mtp.*,t_suit_room.name as room FROM
+		(SELECT
+		idt_product,fid_room, name, images,price,price_market,fid_product_type,product_count
+		from t_product LEFT JOIN r_room_product ON idt_product=fid_product
+		WHERE idt_product=#{productId} and status = 1 and price >0) mtp LEFT JOIN
+		t_suit_room ON fid_room=idt_room) m LEFT JOIN t_product_type t ON
+		t.type_key = fid_product_type LIMIT 0,1;
+
+	</select>
+
+
+	<select id="queryCompositeSingle2" parameterType="map"
+		resultMap="suitProductMap">
+		SELECT mtp.idt_product,mtp.price ,mtp.count FROM
+
+		( SELECT mtsp.fid_product as idt_product,mtsp.fid_room,mtsp.fid_suit,
+		tp.name,tp.images,
+		tp.price,tp.price_market,mtsp.count
+		FROM
+		(SELECT mtrsr.fid_room,mtrsr.fid_suit,mtrrp.fid_product,mtrrp.product_count
+		as count
+		FROM
+		(select * FROM r_suit_room WHERE fid_suit = #{compositeProductId}) mtrsr LEFT
+		JOIN
+		(SELECT * FROM r_room_product) mtrrp ON mtrsr.fid_room = mtrrp.fid_room) mtsp
+
+		INNER JOIN t_product tp ON mtsp.fid_product = tp.idt_product where
+		tp.status=1 and tp.price >0) mtp
+
+		INNER JOIN t_suit_room ON t_suit_room.idt_room = mtp.fid_room;
+	</select>
+	
+		<select id="queryLocationByBuildingId" parameterType="map"
+		resultMap="suitResultMap">
+			SELECT 
+			  CONCAT(
+			    t2.area_name,
+			    t1.area_name,
+			    t_building.location
+			  ) location 
+			FROM
+			  t_areas t1 
+			  INNER JOIN t_building 
+			    ON t_building.fid_district = t1.idt_areas 
+			  LEFT JOIN t_areas t2 
+			    ON t2.idt_areas = t1.parent_id 
+			WHERE t_building.idt_building = #{buildingId}
+		</select>
+
+	<select id="queryCompositeProductById" parameterType="map"
+		resultMap="suitResultMap">
+
+		SELECT DISTINCT mtfinal.*,rsp.count as count from
+		(
+		SELECT
+		mtsdthh.*,mthb.fid_building,mthb.building_name,location,latitude,longitude
+		FROM
+		(
+		SELECT mtsdth.*, t_house.name as house_name, size, room,
+		living,balcony,toilet,kitchen from
+
+		(SELECT mtsdt.*, fid_house from
+		--
+		(SELECT mtsi.*, t_user.nick_name AS designer_name, t_user.u_img AS
+		designer_image,t_user.brief  from
+		(SELECT t_suit.*,t_style.name as style FROM t_suit LEFT JOIN t_style on
+		t_suit.fid_style = t_style.style_key WHERE 
+		t_suit.idt_suit = #{compositeProductId} ) mtsi
+		LEFT JOIN t_user ON (mtsi.fid_designer = t_user.u_id AND (1 = t_user.grade <![CDATA[&]]> 1))
+		LEFT JOIN t_designer ON t_user.mobile = t_designer.mobile)
+		mtsdt
+		--
+		left JOIN
+		--
+		(SELECT fid_suit,fid_house from r_house_suit) mtsh
+		--
+		on mtsh.fid_suit = mtsdt.idt_suit ) mtsdth
+		LEFT JOIN t_house ON mtsdth.fid_house=t_house.idt_house
+		) mtsdthh
+		LEFT JOIN
+		(
+		SELECT fid_house,fid_building, tb.name as building_name,
+		location,latitude,longitude
+		from (SELECT fid_house,fid_building from r_building_house) rbh LEFT JOIN
+		t_building tb ON rbh.fid_building=tb.idt_building
+		) mthb on mthb.fid_house = mtsdthh.fid_house
+		) mtfinal left JOIN
+		(
+		SELECT rsr.fid_suit AS fid_suit, SUM(rrpp.product_count) AS COUNT
+		FROM(
+		SELECT rrp.fid_room,rrp.product_count FROM r_room_product rrp INNER JOIN
+		t_product tp ON rrp.fid_product=tp.idt_product WHERE tp.status=1 and
+		tp.price >0) rrpp
+		LEFT JOIN r_suit_room rsr ON rrpp.fid_room = rsr.fid_room
+		GROUP BY rsr.fid_suit
+		) rsp
+		on rsp.fid_suit = mtfinal.idt_suit
+
+	</select>
+
+	<select id="queryCompositeSingleDetails" parameterType="map"
+		resultMap="productSummaryMap">
+		SELECT m.*,t.name as product_type from
+		(
+		SELECT mtp.*, t_suit_room.name as room,t_suit_room.images AS room_images FROM
+
+		( SELECT mtsp.fid_product as idt_product,mtsp.fid_room,mtsp.fid_suit,
+		tp.name,tp.images,
+		tp.price,tp.price_market,tp.fid_product_type,mtsp.product_count
+		FROM
+		(SELECT mtrsr.fid_room,mtrsr.fid_suit,mtrrp.fid_product,mtrrp.product_count
+		FROM
+		(select * FROM r_suit_room WHERE fid_suit = #{compositeProductId} ) mtrsr
+		LEFT JOIN
+		(SELECT * FROM r_room_product) mtrrp ON mtrsr.fid_room = mtrrp.fid_room) mtsp
+
+		LEFT JOIN t_product tp ON mtsp.fid_product = tp.idt_product WHERE
+		tp.status=1) mtp
+
+		LEFT JOIN t_suit_room ON t_suit_room.idt_room = mtp.fid_room where t_suit_room.name =
+		#{firstContent})
+		m LEFT JOIN t_product_type t ON t.type_key = m.fid_product_type;
+
+	</select>
+	<select id="queryFirstContents" parameterType="map" resultType="java.lang.String">
+		SELECT t_suit_room.name as name from
+		(SELECT * from r_suit_room WHERE fid_suit = #{compositeProductId}) rsr LEFT
+		JOIN t_suit_room ON t_suit_room.idt_room = rsr.fid_room
+	</select>
+
+	<select id="queryHouseSuitProduct" parameterType="map"
+		resultMap="houseSuitProductMap">
+		SELECT * FROM (SELECT
+		mtsdthh.*,mthb.fid_building,mthb.building_name,location,latitude,longitude,mthb.city_code,MAX(mtsdthh.price)
+		AS highestPrice,MIN(mtsdthh.price)AS lowestPrice FROM
+		(
+		SELECT hs.*,mtsdt.* FROM (SELECT t_house.idt_house,t_house.name AS
+		house_name,t_house.images AS house_imgs, size, room,
+		living,balcony,toilet,kitchen,r_house_suit.fid_suit FROM t_house LEFT
+		JOIN r_house_suit ON t_house.idt_house=r_house_suit.fid_house) hs
+		INNER JOIN
+		(SELECT mtsi.*, t_user.name AS designer FROM
+		(SELECT t_suit.*,t_style.name AS style FROM t_suit LEFT JOIN t_style ON
+		t_suit.fid_style = t_style.style_key where t_suit.status=1) mtsi
+		LEFT JOIN t_user ON mtsi.fid_designer = t_user.u_id 
+		LEFT JOIN t_designer ON t_user.mobile = t_designer.mobile
+		
+		) mtsdt
+		ON hs.fid_suit=mtsdt.idt_suit
+		) mtsdthh
+		LEFT JOIN
+		(
+		SELECT fid_house,fid_building, tb.name AS building_name,
+		location,latitude,longitude,tb.fid_district AS city_code
+		FROM (SELECT fid_house,fid_building FROM r_building_house) rbh LEFT JOIN
+		t_building tb ON rbh.fid_building=tb.idt_building
+		) mthb ON mtsdthh.idt_house =mthb.fid_house
+		WHERE 1=1 GROUP BY idt_house)hstz WHERE 1=1 ORDER BY create_time DESC ,
+		hstz.size ASC, lowestPrice ASC LIMIT 0, #{count}
+	</select>
+	<select id="queryHouseSuitFromBuilding" parameterType="map"
+		resultMap="houseSuitProductMap">
+		SELECT * FROM (SELECT
+		mtsdthh.*,mthb.fid_building,mthb.building_name,location,latitude,longitude,mthb.city_code,MAX(mtsdthh.price)
+		AS highestPrice,MIN(mtsdthh.price)AS lowestPrice FROM
+		(
+		SELECT hs.*,mtsdt.* FROM (SELECT t_house.idt_house,t_house.name AS
+		house_name,t_house.images AS house_imgs, size, room,
+		living,balcony,toilet,kitchen,r_house_suit.fid_suit FROM t_house LEFT
+		JOIN r_house_suit ON t_house.idt_house=r_house_suit.fid_house) hs
+		INNER JOIN
+		(SELECT mtsi.*, t_user.name AS designer FROM
+		(SELECT t_suit.*,t_style.name AS style FROM t_suit LEFT JOIN t_style ON
+		t_suit.fid_style = t_style.style_key WHERE t_suit.off_line_experience=1 and
+		t_suit.status=1) mtsi
+		
+		LEFT JOIN t_user ON mtsi.fid_designer = t_user.u_id 
+		LEFT JOIN t_designer ON t_user.mobile = t_designer.mobile		
+		) mtsdt
+		ON hs.fid_suit=mtsdt.idt_suit
+		) mtsdthh
+		LEFT JOIN
+		(
+		SELECT fid_house,fid_building, tb.name AS building_name,
+		location,latitude,longitude,tb.fid_district AS city_code
+		FROM (SELECT fid_house,fid_building FROM r_building_house) rbh LEFT JOIN
+		t_building tb ON rbh.fid_building=tb.idt_building
+		) mthb ON mtsdthh.idt_house =mthb.fid_house
+		WHERE 1=1 AND mthb.fid_building=#{buildingId} GROUP BY idt_house)hstz WHERE
+		1=1 ORDER BY create_time DESC , hstz.size ASC, lowestPrice ASC LIMIT
+		0, #{count}
+	</select>
+	<select id="querySuitProductsByHouseId" parameterType="java.lang.Long"
+		resultMap="suit2ProductMap">
+		<!-- SELECT DISTINCT(mtsdt.style) FROM ( -->
+		<!-- SELECT t_house.idt_house,t_house.name AS house_name, size, room, living,balcony,toilet,kitchen,r_house_suit.fid_suit 
+			FROM t_house -->
+		<!-- LEFT JOIN r_house_suit ON t_house.idt_house=r_house_suit.fid_house 
+			WHERE t_house.idt_house=#{houseId}) hs INNER JOIN -->
+		<!-- (SELECT mtsi.*, t_designer.name AS designer FROM -->
+		<!-- (SELECT t_suit.*,t_items.name AS style FROM t_suit LEFT JOIN t_items 
+			ON t_suit.fid_style = t_items.id) mtsi -->
+		<!-- LEFT JOIN t_designer ON mtsi.fid_designer = t_designer.idt_designer) 
+			mtsdt ON hs.fid_suit=mtsdt.idt_suit -->
+		SELECT mtsdt.* FROM (
+		SELECT t_house.idt_house,t_house.name AS house_name, size, room,
+		living,balcony,toilet,kitchen,r_house_suit.fid_suit FROM t_house
+		LEFT JOIN r_house_suit ON t_house.idt_house=r_house_suit.fid_house WHERE
+		t_house.idt_house=#{houseId}) hs INNER JOIN
+		(SELECT mtsi.*, t_user.name AS designer FROM
+		(SELECT t_suit.*,t_style.name AS style FROM t_suit LEFT JOIN t_style ON
+		t_suit.fid_style = t_style.style_key where t_suit.status=1) mtsi
+
+		LEFT JOIN t_user ON mtsi.fid_designer = t_user.u_id 
+		LEFT JOIN t_designer ON t_user.mobile = t_designer.mobile		
+		) mtsdt
+		ON hs.fid_suit=mtsdt.idt_suit WHERE 1=1 ORDER BY off_line_experience
+		DESC, create_time ASC
+	</select>
+	<select id="querySuitsByHouseIdExper" parameterType="java.lang.Long"
+		resultMap="suit2ProductMap">
+		SELECT mtsdt.* FROM (
+		SELECT t_house.idt_house,t_house.name AS house_name, size, room,
+		living,balcony,toilet,kitchen,r_house_suit.fid_suit FROM t_house
+		LEFT JOIN r_house_suit ON t_house.idt_house=r_house_suit.fid_house WHERE
+		t_house.idt_house=#{houseId}) hs INNER JOIN
+		(SELECT mtsi.*, t_user.name AS designer FROM
+		(SELECT t_suit.*,t_style.name AS style FROM t_suit LEFT JOIN t_style ON
+		t_suit.fid_style = t_style.style_key where t_suit.status=1) mtsi
+
+		LEFT JOIN t_user ON mtsi.fid_designer = t_user.u_id 
+		LEFT JOIN t_designer ON t_user.mobile = t_designer.mobile		
+		) mtsdt
+		ON hs.fid_suit=mtsdt.idt_suit WHERE 1=1 and off_line_experience=1
+		ORDER BY off_line_experience DESC, create_time ASC
+	</select>
+
+	<select id="queryHouseSuitProductByHouseId" parameterType="map"
+		resultMap="suitMap">
+		SELECT mtfinal.*,rsp.count AS COUNT FROM
+		(
+		SELECT mtsdth.*,mthb.* FROM
+
+		(
+		SELECT hs.*,mtsdt.* FROM (SELECT t_house.idt_house,t_house.name AS
+		house_name,t_house.images AS house_imgs, size, room,
+		living,balcony,toilet,kitchen,r_house_suit.fid_suit FROM t_house LEFT
+		JOIN r_house_suit ON t_house.idt_house=r_house_suit.fid_house WHERE
+		t_house.idt_house=#{houseId}) hs INNER JOIN
+		(SELECT mtsi.*, t_user.name AS designer FROM
+		(SELECT t_suit.*,t_style.name AS style FROM t_suit LEFT JOIN t_style ON
+		t_suit.fid_style = t_style.style_key
+
+		WHERE 1=1 and t_suit.status=1
+		<if test="isExper != null and isExper != ''">
+			and t_suit.off_line_experience=#{isExper}
+		</if>
+		) mtsi
+		
+		LEFT JOIN t_user ON mtsi.fid_designer = t_user.u_id 
+		LEFT JOIN t_designer ON t_user.mobile = t_designer.mobile	
+		) mtsdt
+		ON hs.fid_suit=mtsdt.idt_suit
+		) mtsdth
+		LEFT JOIN
+		(
+		SELECT fid_house,fid_building, tb.name AS building_name,
+		location,latitude,longitude
+		FROM (SELECT fid_house,fid_building FROM r_building_house) rbh LEFT JOIN
+		t_building tb ON rbh.fid_building=tb.idt_building
+		) mthb ON mthb.fid_house = mtsdth.idt_house
+		) mtfinal LEFT JOIN
+		(
+		SELECT rsr.fid_suit AS fid_suit, SUM(rrpp.product_count) AS COUNT
+		FROM(
+		SELECT rrp.fid_room,rrp.product_count FROM r_room_product rrp INNER JOIN
+		t_product tp ON rrp.fid_product=tp.idt_product WHERE tp.status=1) rrpp
+		LEFT JOIN r_suit_room rsr ON rrpp.fid_room = rsr.fid_room
+		GROUP BY rsr.fid_suit
+		) rsp
+		ON rsp.fid_suit = mtfinal.idt_suit ORDER BY mtfinal.size ASC LIMIT 0, 12
+	</select>
+	<select id="queryProductByCondition" parameterType="map"
+		resultMap="productSummaryMap">
+		SELECT
+		idt_product,
+		t_product.name,
+		images,
+		price,
+		price_market,
+		fid_product_type,
+		weight_value,
+		create_time,
+		t_product.status,
+		t_product.productAttr_json,
+		price_hide
+		FROM
+		t_product_type,
+		t_product 
+		left join t_series
+		on t_product.fid_series = t_series.id
+		<if test="productTypeId != null">
+			RIGHT JOIN
+			(SELECT
+			detail_classify
+			FROM
+			t_product_classify
+			WHERE main_category = #{productTypeId}) mp
+			ON t_product.fid_product_type = mp.detail_classify
+		</if>
+		where t_product.status=1
+		    AND t_product_type.type_key = 2
+			AND FIND_IN_SET(t_product.fid_product_type,t_product_type.leaf)
+		<if test="ishome != null">
+			AND t_product.ishome > 0
+			ORDER BY t_product.ishome
+		</if>
+		<if test="ishome == null">
+		<if test="productSort == null or 0 == productSort">
+			ORDER BY weight_value DESC ,create_time DESC
+		</if>
+		<if test="1 == productSort">
+			ORDER BY price DESC ,create_time DESC
+		</if>
+		<if test="2 == productSort">
+			ORDER BY price ASC ,create_time DESC
+		</if>
+		</if>
+		LIMIT #{from},#{size}
+	</select>
+
+	<select id="queryProductCount150" parameterType="map"
+		resultType="java.lang.Long">
+		SELECT
+		count(1)
+		FROM
+		t_product_type,
+		t_product
+		<if test="productTypeId != null">
+			RIGHT JOIN
+			(SELECT
+			detail_classify
+			FROM
+			t_product_classify
+			WHERE main_category = #{productTypeId}) mp
+			ON t_product.fid_product_type = mp.detail_classify
+		</if>
+		where t_product.status=1
+		    AND t_product_type.type_key = 2
+			AND FIND_IN_SET(t_product.fid_product_type,t_product_type.leaf)
+	</select>
+
+	<resultMap id="buttonResultMap" type="com.ihomefnt.o2o.intf.domain.product.vo.response.AppButton">
+		<result property="buttonName" column="button_name" />
+		<result property="iconUrl" column="icon" />
+		<result property="nodeId" column="node_id" />
+		<result property="type" column="type" />
+		<result property="filterId" column="filter_id" />
+		<result property="imageUrl" column="image_url" />
+	</resultMap>
+	
+	<select id="queryButtonSort"  resultMap="buttonResultMap">
+        SELECT DISTINCT button_name, icon,node_id,type,filter_id  FROM t_button where TYPE IN(1,2) and status=1 ORDER BY button_sort ASC
+	</select>
+
+	<select id="queryButtonSort170"  resultMap="buttonResultMap">
+        SELECT button_name, icon,node_id,TYPE,filter_id  FROM t_button WHERE button_id IN(1,2,3,4,5,6,9,10) and status=1 ORDER BY button_sort ASC
+	</select>
+	<select id="queryButtonSort200"  resultMap="buttonResultMap">
+        SELECT button_name, image_url,node_id,TYPE,filter_id  FROM t_button WHERE button_id IN(1,3,4,5,6) and status=1 ORDER BY button_sort ASC
+	</select>
+	<select id="queryButtonSort260"  resultMap="buttonResultMap">
+        SELECT button_name, icon, image_url,node_id,TYPE,filter_id  
+		FROM t_button WHERE button_id > 23 AND button_id <![CDATA[<]]> 38 
+		and status = 1 ORDER BY button_sort ASC, type ASC
+	</select>
+	
+	<select id="queryPhotoButton"  resultMap="buttonResultMap">
+        SELECT button_name, image_url,node_id,TYPE,filter_id  FROM t_button WHERE type = 5 and status=1 ORDER BY button_sort ASC
+	</select>
+	<select id="queryStrategyButton"  resultMap="buttonResultMap">
+        SELECT button_name, image_url,node_id,TYPE,filter_id  FROM t_button WHERE type = 6 and status=1 ORDER BY button_sort ASC
+	</select>
+			
+	<resultMap id="suitRecResultMap" type="com.ihomefnt.o2o.intf.domain.product.vo.response.Suit">
+		<id property="suitId" column="suit_id" />
+		<result property="suitName" column="suit_name" />
+		<result property="images" column="images" />
+		<result property="typeName" column="typeName" />
+		<result property="typeId" column="typeId" />
+	</resultMap>
+	
+	<select id="querySuitById" resultType="java.lang.String"  parameterType="map">
+		SELECT 
+			name
+		 FROM  t_suit
+		 WHERE idt_suit=#{suitId}
+	</select>
+	
+	<select id="queryNewSuit" resultMap="suitRecResultMap"  parameterType="map">
+		SELECT 
+			ts.idt_suit suit_id,
+			ts.name suit_name,
+			ts.images,
+			'新品特卖' typeName,
+			1 typeId
+		 FROM  t_suit ts
+		 WHERE ts.status=1
+			AND ts.idt_suit in (
+					SELECT 
+						ts1.idt_suit
+					FROM t_building tb,
+						r_building_house rbh,
+						t_house th,
+						r_house_suit rhs,
+						t_suit ts1
+					WHERE tb.idt_building = rbh.fid_building
+						AND rbh.fid_house = th.idt_house
+						AND th.idt_house = rhs.fid_house
+						AND rhs.fid_suit = ts1.idt_suit	
+						AND ts1.status=1
+					<if test="cityCode != null">
+						AND (tb.fid_district IN (SELECT idt_areas FROM t_areas WHERE zipcode=#{cityCode}))
+					</if>		
+			)		 
+		 ORDER BY  ts.create_time DESC
+		 LIMIT 0,2
+	</select>
+	
+	<select id="querySellCntSuit" resultMap="suitRecResultMap" parameterType="map">
+		SELECT 
+		ts.idt_suit suit_id,
+		ts.name suit_name,
+		ts.images,
+		'爆款推荐' typeName,
+		2 typeId		 
+		FROM t_suit ts,		 
+			(SELECT product_id,COUNT(1) cnt
+			FROM t_order
+			WHERE product_type =1
+			AND order_status IN (1,2,4,5,6)
+			GROUP BY product_id) torder
+		WHERE ts.idt_suit = torder.product_id
+		<if test="suitIds != null">
+			AND ts.idt_suit NOT IN (${suitIds})
+		</if>	
+		AND ts.idt_suit in (
+				SELECT 
+					ts1.idt_suit
+				FROM t_building tb,
+					r_building_house rbh,
+					t_house th,
+					r_house_suit rhs,
+					t_suit ts1
+				WHERE tb.idt_building = rbh.fid_building
+					AND rbh.fid_house = th.idt_house
+					AND th.idt_house = rhs.fid_house
+					AND rhs.fid_suit = ts1.idt_suit	
+					AND ts1.status=1
+				<if test="cityCode != null">
+					AND (tb.fid_district IN (SELECT idt_areas FROM t_areas WHERE zipcode=#{cityCode}))
+				</if>		
+		)
+		ORDER BY torder.cnt DESC
+		LIMIT 0,2
+	</select>
+	
+	<select id="queryRecSuit" resultMap="suitRecResultMap" parameterType="map">
+		SELECT 
+			ts.idt_suit suit_id,
+			ts.name suit_name,
+			ts.images,
+			CASE trl.type_id WHEN 3 THEN '大牌推荐' WHEN 2 THEN '低价爆款' WHEN 1 THEN '新品特卖' END  AS typeName,
+			trl.type_id  AS typeId
+		 FROM  t_rec_list trl,t_suit ts
+		 WHERE  trl.type=2
+		 AND trl.status=1
+		 AND ts.idt_suit = trl.fid_id
+		 AND ts.status=1
+		<if test="suitIds != null">
+			AND ts.idt_suit NOT IN (${suitIds})
+		</if>		 
+		<if test="cityCode != null">
+			AND trl.city_code=#{cityCode}
+		</if>		 
+		 ORDER BY  trl.sort_num ASC
+		 limit 0,6
+	</select>
+	
+	<select id="queryRecSuitCms" resultType="java.lang.String" parameterType="map">
+		SELECT th.content FROM  t_homepage th 
+		left join t_channel tc on th.fid_channel = tc.id_channel
+		 WHERE 1=1 
+		<if test="cityCode != null">
+			AND tc.channel_code = #{cityCode}
+		</if>
+		<if test="cityCode == null">
+			AND th.type=0
+		</if>
+	</select>
+
+	<resultMap id="productRecResultMap" type="com.ihomefnt.o2o.intf.domain.product.vo.response.Recommend">
+		<id property="recId" column="idt_rec" />
+		<result property="iconUrl" column="icon_url" />
+		<result property="recName" column="rec_name" />
+		<result property="filterId" column="filter_id" />
+		<result property="grid" column="grid" />
+		<result property="nodeId" column="node_id" />
+		<collection property="recProductList" resultMap="recProductListResultMap" />
+	</resultMap>
+
+	<resultMap id="recProductListResultMap" type="com.ihomefnt.o2o.intf.domain.product.vo.response.Product">
+		<id property="productId" column="idt_product" />
+		<result property="productName" column="product_name" />
+		<result property="imagesUrl" column="images" />
+		<result property="styleName" column="style_name" />
+	</resultMap>
+
+	<select id="queryRecProduct" resultMap="productRecResultMap">
+		SELECT 
+			tr.idt_rec,
+			tr.icon_url,
+			tr.rec_name,
+			tr.filter_id,
+			tr.grid,
+			tr.node_id,
+			tp.idt_product,
+			tp.name product_name,
+			trl.images,
+			ti.name style_name
+		 FROM  t_recommend tr,t_rec_list trl,t_product tp left join t_style ti on tp.fid_style = ti.style_key
+		 WHERE tr.idt_rec = trl.fid_rec 
+		 AND tr.status=1
+		 AND trl.type=1
+		 AND trl.status=1
+		 AND tp.idt_product = trl.fid_id
+		 AND tp.status=1
+		<if test="cityCode != null">
+			AND tr.city_code=#{cityCode}
+		</if>		 
+		 ORDER BY tr.sort_num ASC,trl.sort_num ASC
+	</select>
+
+	<resultMap id="suitListResultMap" type="com.ihomefnt.o2o.intf.domain.product.vo.response.SuitList">
+		<id property="suitId" column="suit_id" />
+		<result property="suitName" column="suit_name" />
+		<result property="images" column="suit_images" />
+		<result property="styleName" column="style_name" />
+		<result property="price" column="price" />
+		<result property="houseName" column="house_name" />
+		<result property="size" column="size" />
+		<result property="suitProductCount" column="product_count" />
+		<result property="status" column="status" />
+		<result property="discount" column="discount" />
+		<result property="avatar" column="avatar" />
+		<result property="sales" column="sale_count" />
+	</resultMap>	
+
+	<select id="querySuitList" resultMap="suitListResultMap" parameterType="map">
+		SELECT 
+			DISTINCT
+					CONCAT(
+					CASE WHEN th.room > 0 THEN th.room ELSE '' END,
+					CASE WHEN th.room > 0 THEN '房' ELSE ''  END,	
+					CASE WHEN th.living > 0 THEN th.living ELSE '' END,
+					CASE WHEN th.living > 0 THEN '厅' ELSE ''  END,		
+					CASE WHEN th.toilet > 0 THEN th.toilet ELSE '' END,
+					CASE WHEN th.toilet > 0 THEN '卫' ELSE ''  END
+					) house_name,
+					th.size,
+					ts.idt_suit suit_id,
+					ts.name suit_name,
+					ts.images suit_images,
+					tt.name style_name,
+					ts.price price,
+					ts.status,
+					tu.u_img AS avatar,
+					ts.sale_count,
+					10 as discount
+				FROM t_building tb,
+					r_building_house rbh,
+					t_house th,
+					r_house_suit rhs,
+					t_suit ts
+		
+		LEFT JOIN t_user tu on ts.fid_designer = tu.u_id
+		LEFT JOIN t_designer td  on tu.mobile = td.mobile
+		LEFT JOIN t_style tt on ts.fid_style = tt.style_key
+		WHERE tb.idt_building = rbh.fid_building
+					AND rbh.fid_house = th.idt_house
+					AND th.idt_house = rhs.fid_house
+					AND rhs.fid_suit = ts.idt_suit
+					AND ts.status=1 
+		<if test="suitIds != null">
+			AND ts.idt_suit IN (${suitIds})
+		</if>
+		<if test="suitId != null">
+			AND ts.idt_suit=#{suitId}
+		</if>					
+		<!-- <if test="cityCode != null">
+			AND (tb.fid_district IN (SELECT idt_areas FROM t_areas WHERE zipcode=#{cityCode})
+			<if test="cityCode == '210000'">
+				OR tb.idt_building=3
+		    </if>
+			)
+		</if>	 -->		
+		
+		<if test="cityCode != null">
+			<if test="cityCode == '210000'">
+					and tb.fid_company in (7,8)
+			 </if>
+			 <if test="cityCode == '450000'">
+					and tb.fid_company in (9)
+			 </if>
+			 <if test="cityCode == '100000'">
+					and tb.fid_company in (10)
+			 </if>
+			  <if test="cityCode == '571700'">
+					AND (tb.fid_district IN (SELECT idt_areas FROM t_areas WHERE zipcode=#{cityCode}))
+			 </if>
+		 </if>
+		<if test="conditionS != null">
+		    <![CDATA[
+			${conditionS}
+			]]>		
+		</if>
+		<if test="orderSort != null">
+			${orderSort}
+		</if>		
+		<if test="orderSort == null||orderSort==''" >
+			ORDER BY ts.weight_value desc,ts.create_time DESC
+		</if>
+		limit #{size},#{pageSize}
+		
+		<!-- SELECT DISTINCT
+			CONCAT(
+			CASE WHEN th.room > 0 THEN th.room ELSE '' END,
+			CASE WHEN th.room > 0 THEN '房' ELSE ''  END,	
+			CASE WHEN th.living > 0 THEN th.living ELSE '' END,
+			CASE WHEN th.living > 0 THEN '厅' ELSE ''  END,		
+			CASE WHEN th.toilet > 0 THEN th.toilet ELSE '' END,
+			CASE WHEN th.toilet > 0 THEN '卫' ELSE ''  END
+			) house_name,
+			th.size,
+			ts.idt_suit suit_id,
+			ts.name suit_name,
+			ts.images suit_images,
+			tt.name style_name,
+			ts.price price,
+			ts.status,
+			tu.u_img AS avatar,
+			ts.sale_count,
+			10 as discount
+		FROM t_building tb,
+			r_building_house rbh,
+			t_house th,
+			r_house_suit rhs,
+			t_suit ts, 
+			t_designer td , 
+			t_user tu,
+			t_style tt 
+		WHERE tb.idt_building = rbh.fid_building
+			AND rbh.fid_house = th.idt_house
+			AND th.idt_house = rhs.fid_house
+			AND rhs.fid_suit = ts.idt_suit
+			AND ts.status=1
+			
+			AND ts.fid_style = tt.style_key
+			AND ts.fid_designer = tu.u_id
+			AND tu.mobile = td.mobile
+		<if test="suitIds != null">
+			AND ts.idt_suit IN (${suitIds})
+		</if>
+		<if test="suitId != null">
+			AND ts.idt_suit=#{suitId}
+		</if>					
+		<if test="cityCode != null">
+			AND (tb.fid_district IN (SELECT idt_areas FROM t_areas WHERE zipcode=#{cityCode})
+			<if test="cityCode == '210000'">
+				OR tb.idt_building=3
+		    </if>
+			)
+		</if>			
+		
+		<if test="cityCode != null">
+			<if test="cityCode == '210000'">
+					and tb.fid_company in (7,8)
+			 </if>
+			 <if test="cityCode == '450000'">
+					and tb.fid_company in (9)
+			 </if>
+			 <if test="cityCode == '100000'">
+					and tb.fid_company in (10)
+			 </if>
+			  <if test="cityCode == '571700'">
+					AND (tb.fid_district IN (SELECT idt_areas FROM t_areas WHERE zipcode=#{cityCode}))
+			 </if>
+		 </if>
+		<if test="conditionS != null">
+		    <![CDATA[
+			${conditionS}
+			]]>		
+		</if>
+		<if test="orderSort != null">
+			${orderSort}
+		</if>		
+		<if test="orderSort == null||orderSort==''" >
+			ORDER BY ts.weight_value desc,ts.create_time DESC
+		</if>
+		limit #{size},#{pageSize} -->
+	</select>
+
+	<select id="querySuitListCount" parameterType="map" resultType="java.lang.Integer">
+		SELECT
+			 COUNT(distinct ts.idt_suit) AS COUNT
+		FROM t_building tb,
+			r_building_house rbh,
+			t_house th,
+			r_house_suit rhs,
+			t_suit ts, 
+			t_designer td , 
+			t_user tu,
+			t_style tt 
+		WHERE tb.idt_building = rbh.fid_building
+			AND rbh.fid_house = th.idt_house
+			AND th.idt_house = rhs.fid_house
+			AND rhs.fid_suit = ts.idt_suit
+			AND ts.status=1
+			AND ts.fid_style = tt.style_key
+			AND ts.fid_designer = tu.u_id
+			AND tu.mobile = td.mobile
+		<!-- <if test="cityCode != null">
+			AND (tb.fid_district IN (SELECT idt_areas FROM t_areas WHERE zipcode=#{cityCode})
+			<if test="cityCode == '210000'">
+				OR tb.idt_building=3
+		    </if>
+			)			
+		</if>	 -->
+		
+		<if test="cityCode != null">
+			<if test="cityCode == '210000'">
+					and tb.fid_company in (7,8)
+			 </if>
+			 <if test="cityCode == '450000'">
+					and tb.fid_company in (9)
+			 </if>
+			 <if test="cityCode == '100000'">
+					and tb.fid_company in (10)
+			 </if>
+		 </if>		
+		 
+		<if test="conditionS != null">
+		    <![CDATA[
+				${conditionS}
+			]]>
+		</if>
+	</select>	
+	
+    <select id="queryProductCountBySuitId" parameterType="map" resultMap="suitListResultMap">
+		SELECT 
+			rsr.fid_suit suit_id,
+			SUM(rrp.product_count) product_count
+		FROM r_suit_room rsr LEFT JOIN (SELECT trrp.fid_room , trrp.product_count FROM r_room_product trrp inner JOIN t_product tp ON tp.idt_product=trrp.fid_product AND tp.status=1) rrp ON rsr.fid_room = rrp.fid_room
+	    <if test="suitId != null" >
+	        WHERE rsr.fid_suit in (${suitId})
+	    </if>
+		GROUP BY rsr.fid_suit   
+    </select>
+    
+    <resultMap id="roomListResultMap" type="com.ihomefnt.o2o.intf.domain.product.doo.Room">
+		<id property="roomId" column="idt_room" />
+		<result property="suitId" column="idt_suit" />
+		<result property="suitName" column="suit_name" />
+		<result property="styleName" column="style_name" />
+		<result property="style" column="style" />
+		<result property="name" column="room_name" />
+		<result property="images" column="images" />
+		<result property="roomPrice" column="room_price" />
+		<result property="sets" column="sets" />
+		<result property="size" column="size" />
+		<result property="width" column="width" />
+		<result property="length" column="length" />
+		<result property="roomType" column="room_type" />
+		<result property="sales" column="sale_count" />
+		<result property="originalPrice" column="originalPrice" />
+		
+	</resultMap>
+	
+	<select id="queryRoomById" parameterType="map" resultMap="roomListResultMap">
+		select 
+		    ts.idt_suit,
+		    ts.name suit_name,
+		    tt.name style_name,
+		    tr.fid_style as style,
+		    tr.idt_room,
+		    tr.name room_name,
+		    tr.images,
+		    tr.room_price,
+		    tr.size,
+		    tr.sale_count,
+		    tr.width,
+		    tr.length,
+		    tr.room_type,
+		    sum(tp.price * rrp.product_count) originalPrice,
+		    sum(rrp.product_count) sets
+        from r_suit_room rsr 
+            left join t_suit ts on rsr.fid_suit = ts.idt_suit
+            left join t_suit_room tr on rsr.fid_room = tr.idt_room
+            left join t_style tt on ts.fid_style = tt.style_key
+            left join r_room_product rrp on rsr.fid_room = rrp.fid_room
+            left join t_product tp on rrp.fid_product = tp.idt_product
+            left join r_house_suit rhs on ts.idt_suit = rhs.fid_suit
+            left join t_house th on rhs.fid_house = th.idt_house
+            
+        where tr.idt_room = #{roomId}
+        and ts.type=1
+		group by rsr.fid_room
+		
+	</select>
+	
+	<select id="queryRoomProductById" parameterType="map" resultMap="productListResultMap">
+		select 
+		    tt.name product_name,
+		    rrp.product_count
+        from r_room_product rrp 
+            left join t_suit_room tr on rrp.fid_room = tr.idt_room
+            left join t_product tp on rrp.fid_product = tp.idt_product
+            left join t_product_type tt on tp.fid_product_type = tt.type_key
+
+        where tr.idt_room = #{roomId}
+		
+	</select>
+
+	<select id="queryRoomList" resultMap="roomListResultMap" parameterType="map">
+		select 
+		    ts.idt_suit,
+		    ts.name suit_name,
+		    tt.name style_name,
+		    tr.idt_room,
+		    tr.name room_name,
+		    tr.images,
+		    tr.room_price room_price,
+		    tr.size,
+		    tr.room_type,
+		    tr.sale_count,
+		    sum(rrp.product_count) sets
+        from r_suit_room rsr 
+            left join t_suit ts on rsr.fid_suit = ts.idt_suit
+            left join t_suit_room tr on rsr.fid_room = tr.idt_room
+            left join t_style tt on ts.fid_style = tt.style_key
+            left join r_room_product rrp on rsr.fid_room = rrp.fid_room
+            left join r_house_suit rhs on ts.idt_suit = rhs.fid_suit
+            left join r_building_house rbh on rhs.fid_house = rbh.fid_house
+            left join t_house th on rhs.fid_house = th.idt_house
+            left join t_building tb on rbh.fid_building = tb.idt_building
+            left join t_areas ta on tb.fid_district = ta.idt_areas
+            
+        where 1=1
+        <if test="roomIds == null">
+			AND ts.status=1
+		</if>
+		   and ts.type=1
+        <if test="roomName != null and roomName !='allroom'">
+			AND tr.room_type in (${roomType})
+		</if>	
+        <if test="roomIds != null">
+			AND tr.idt_room in (${roomIds})
+		</if>	
+		<if test="cityCode != null">
+			AND ta.zipcode = #{cityCode}
+		</if>				
+		<if test="conditionS != null">
+		    <![CDATA[
+			${conditionS}
+			]]>		
+		</if>
+		group by rsr.fid_room
+		<if test="orderSort != null">
+			${orderSort}
+		</if>		
+		<if test="orderSort == null">
+			ORDER BY tr.weight_value DESC,tr.create_time DESC
+		</if>
+		limit #{size},#{pageSize}
+	</select>
+
+	<select id="queryRoomListCount" parameterType="map" resultType="java.lang.Integer">
+		SELECT 
+			count(1) as count
+		from r_suit_room rsr 
+            left join t_suit ts on rsr.fid_suit = ts.idt_suit
+            left join t_suit_room tr on rsr.fid_room = tr.idt_room
+            left join t_style tt on ts.fid_style = tt.style_key
+            left join r_house_suit rhs on ts.idt_suit = rhs.fid_suit
+            left join r_building_house rbh on rhs.fid_house = rbh.fid_house
+            left join t_house th on rhs.fid_house = th.idt_house
+            left join t_building tb on rbh.fid_building = tb.idt_building
+            left join t_areas ta on tb.fid_district = ta.idt_areas
+        where ts.status=1
+        <if test="roomName != null and roomName !='allroom'">
+			AND tr.room_type in (${roomType})
+		</if>	
+        <if test="roomIds != null">
+			AND tr.idt_room in (${roomIds})
+		</if>	
+		<if test="cityCode != null">
+			AND ta.zipcode = #{cityCode}
+		</if>			
+		<if test="conditionS != null">
+		    <![CDATA[
+				${conditionS}
+			]]>
+		</if>
+		
+	</select>
+    
+	<resultMap id="suitRoomProductResultMap" type="com.ihomefnt.o2o.intf.domain.product.doo.RoomProduct">
+		<id property="suitId" column="idt_suit" />
+		<result property="suitName" column="suit_name" />
+		<result property="suitPrice" column="suit_price" />
+		<result property="roomId" column="idt_room" />
+		<result property="roomName" column="room_name" />
+		<result property="productId" column="idt_product" />
+		<result property="productName" column="product_name" />
+		<result property="productCount" column="product_count" />
+		<result property="productPrice" column="price" />
+		<result property="images" column="images" />
+	</resultMap> 
+	
+    <select id="queryRoomProductBySuitId" parameterType="java.lang.Long" resultMap="suitRoomProductResultMap">
+		SELECT 
+			ts.idt_suit,
+			ts.name suit_name,
+			ts.price suit_price,
+			tr.idt_room,
+			tr.name room_name,
+			tp.idt_product,
+			tp.name product_name,
+			rrp.product_count,
+			tp.price,
+			tp.images
+		FROM t_suit ts,
+			r_suit_room rsr,
+			t_suit_room tr,
+			r_room_product rrp,
+			t_product tp
+		WHERE ts.idt_suit=#{suitId}
+		AND ts.idt_suit=rsr.fid_suit
+		AND rsr.fid_room = tr.idt_room
+		AND tr.idt_room = rrp.fid_room
+		AND rrp.fid_product=tp.idt_product
+		AND tp.status=1
+		ORDER BY tr.idt_room ASC		
+    </select>
+	<select id="querySuitProduct" parameterType="java.lang.Long" resultMap="suitProductMap">
+		SELECT 
+			tp.idt_product,
+			SUM(rrp.product_count) count,
+			tp.price
+		FROM t_suit ts,
+			r_suit_room rsr,
+			t_suit_room tr,
+			r_room_product rrp,
+			t_product tp
+		WHERE ts.idt_suit=#{suitId}
+		AND ts.idt_suit=rsr.fid_suit
+		AND rsr.fid_room = tr.idt_room
+		AND tr.idt_room = rrp.fid_room
+		AND rrp.fid_product=tp.idt_product
+		AND tp.status=1
+		GROUP BY tp.idt_product
+		ORDER BY tr.idt_room ASC		
+	</select>
+
+
+	<resultMap id="productResultMap" type="com.ihomefnt.o2o.intf.domain.product.doo.TProduct">
+		<id property="productId" column="idt_product" />
+		<result property="name" column="name" />
+		<result property="priceCurrent" column="price" />
+		<result property="pictureUrlOriginal" column="images" />
+		<result property="status" column="status" />
+	</resultMap> 
+	
+	<select id="queryProductList" parameterType="map" resultMap="productResultMap">
+		SELECT 
+			idt_product,
+			name,
+			price,
+			images,
+			status
+		FROM t_product
+		where idt_product in (${productIds})
+	</select>
+	
+	<resultMap id="suitRoomProductResultMap2" type="com.ihomefnt.o2o.intf.domain.product.doo.CompositeProductReponseN">
+		<result property="name" column="suit_name" />
+		<result property="designerImg" column="images" />
+		<result property="price" column="suit_price" />
+		<collection property="roomList" resultMap="roomProductListResultMap" />
+	</resultMap>
+
+	<resultMap id="roomProductListResultMap" type="com.ihomefnt.o2o.intf.domain.product.doo.Room">
+		<result property="roomId" column="room_id" />
+		<result property="roomPrice" column="room_price" />
+		<collection property="productSummaryList" resultMap="productListResultMap" />
+	</resultMap>
+
+	<resultMap id="productListResultMap" type="com.ihomefnt.o2o.intf.domain.product.doo.ProductSummaryResponse">
+		<result property="productId" column="product_id" />
+		<result property="priceCurrent" column="product_price" />
+		<result property="name" column="product_name" />
+		<result property="productCount" column="product_count" />
+	</resultMap>
+
+	<select id="querySuitRoomProductById" parameterType="map" resultMap="suitRoomProductResultMap2">
+		SELECT
+			ts.name suit_name,
+			ts.images,
+			ts.price suit_price,
+			tr.idt_room room_id,
+			tr.room_price,
+			tp.idt_product product_id,
+			tp.price product_price,
+			rrp.product_count
+		FROM
+			t_suit ts, 
+			r_suit_room rsr,
+			t_suit_room  tr,
+			r_room_product rrp,
+			t_product tp
+		WHERE ts.idt_suit=#{suitId}
+			AND rsr.fid_suit=ts.idt_suit
+			AND rsr.fid_room=tr.idt_room 
+			AND tr.idt_room = rrp.fid_room
+			AND rrp.fid_product=tp.idt_product
+			AND ts.status=1
+			AND tp.status=1
+			ORDER BY room_id ASC
+	</select>
+	
+	<select id="queryRandomRecSuit" resultMap="suitRecResultMap" parameterType="map">
+		SELECT 
+			ts.idt_suit suit_id,
+			ts.name suit_name,
+			ts.images
+		 FROM  t_rec_list trl,t_suit ts
+		 WHERE  trl.type=2
+		 AND trl.status=1
+		 AND ts.idt_suit = trl.fid_id
+		 AND ts.status=1
+		 AND trl.city_code='210000'
+		 AND ts.idt_suit != #{suitId}
+		 ORDER BY RAND() LIMIT 2
+	</select>
+	
+	<resultMap id="userLikeMap" type="com.ihomefnt.o2o.intf.domain.product.doo.UserLike">
+		<result property="id" column="id" />
+		<result property="userId" column="userId" />
+		<result property="productId" column="productId" />
+		<result property="status" column="status" />
+	</resultMap>
+	<insert id="addUserLike" parameterType="com.ihomefnt.o2o.intf.domain.product.doo.UserLike">
+        INSERT into t_user_like(userId, productId, status)
+        VALUES (#{userId},#{productId},#{status})
+    </insert>
+    <update id="updateUserLike" parameterType="com.ihomefnt.o2o.intf.domain.product.doo.UserLike">
+        UPDATE t_user_like
+        <set>
+            status=#{status}
+        </set>
+        WHERE 1=1
+		<if test="id != null">
+			and id=#{id}
+		</if>
+    </update>
+	<select id="queryUserLike" parameterType="map" resultMap="userLikeMap">
+		SELECT 
+			id,
+			userId,
+			productId,
+			status
+		FROM t_user_like
+		where userId = ${userId} and productId = ${productId}
+	</select>
+	<select id="queryUserLikeCount" parameterType="map" resultType="java.lang.Long">
+		SELECT count(1)
+		FROM t_user_like
+		where productId = ${productId} and status = 1
+	</select>
+	<select id="querySameHouseSuit" parameterType="map" resultMap="previewResultMap">
+		select idt_suit sid, name,price,images 
+		  from t_suit where idt_suit in ( select fid_suit from r_house_suit where 
+          fid_house = (select fid_house from r_house_suit where fid_suit = ${suitId})
+          and fid_suit <![CDATA[<>]]> ${suitId})
+        AND status = 1
+        ORDER BY create_time DESC
+		LIMIT 0,2
+	</select>
+	<select id="queryGuessYouLikeSuit" parameterType="map" resultMap="previewResultMap">
+		select sid,name,price,images from (
+		select ts.idt_suit sid,ts.name,ts.fid_style,ts.create_time,ts.status,ts.price,ts.images,ta.zipcode from t_suit ts
+            left join r_house_suit rhs on ts.idt_suit = rhs.fid_suit
+            left join r_building_house rbh on rhs.fid_house = rbh.fid_house
+            left join t_building tb on rbh.fid_building = tb.idt_building
+            left join t_areas ta on tb.fid_district = ta.idt_areas) ss 
+        where fid_style = (select fid_style from t_suit where idt_suit = ${suitId}) 
+            and sid <![CDATA[<>]]> ${suitId} 
+            and status = 1
+            and zipcode = (select zipcode from (select ts.idt_suit sid,ta.zipcode from t_suit ts
+            left join r_house_suit rhs on ts.idt_suit = rhs.fid_suit
+            left join r_building_house rbh on rhs.fid_house = rbh.fid_house
+            left join t_building tb on rbh.fid_building = tb.idt_building
+            left join t_areas ta on tb.fid_district = ta.idt_areas) rr where sid = ${suitId})
+		ORDER BY create_time DESC
+		LIMIT 0,2
+	</select>
+	<select id="querySuitSales" parameterType="map" resultType="java.lang.Integer">
+		select count(1) from t_order where product_type = 1 
+		  and product_id = ${suitId} 
+		  and order_status in (2,5)
+	</select>
+	<resultMap id="userCommentResultMap" type="com.ihomefnt.o2o.intf.domain.product.doo.UserComment">
+		<id property="commentId" column="id" />
+		<result property="content" column="comment" />
+		<result property="createTime" column="create_time" />
+		<result property="userId" column="editor" />
+		<result property="userName" column="editor_name" />
+		<result property="starCount" column="star_count" />
+		<result property="images" column="images" />
+		<result property="targetId" column="target_id" />
+		<result property="customerNickName" column="nick_name" />
+	</resultMap>
+	<select id="queryUserCommentList" parameterType="map" resultMap="userCommentResultMap">
+		select id, comment,create_time,editor, editor_name,star_count,images,target_id,user.nick_name 
+		  from t_comment left join t_user user on user.u_id = t_comment.editor
+		  where target_id = ${productId}
+		  AND type = ${type}
+          AND status = 1
+        ORDER BY create_time DESC
+		LIMIT #{from},#{size}
+	</select>
+	<select id="queryUserCommentCount" parameterType="map" resultType="java.lang.Integer">
+		select count(1) from t_comment where target_id = ${productId}
+		  AND type = ${type}
+          AND status = 1
+	</select>
+	
+	<resultMap id="userConsultResultMap" type="com.ihomefnt.o2o.intf.domain.product.doo.UserConsult">
+		<id property="consultId" column="idt_consult" />
+		<result property="content" column="ask" />
+		<result property="userName" column="userphone" />
+		<result property="createDate" column="asktime" />
+		<result property="replyContent" column="reply" />
+		<result property="replyDate" column="replytime" />
+		<result property="customerNickName" column="nick_name" />
+	</resultMap>
+	<select id="queryUserConsultList" parameterType="map" resultMap="userConsultResultMap">
+		select 
+		    req.idt_consult,
+		    req.content ask,
+		    req.consult_phone userphone,
+		    req.create_time asktime,
+		    res.content reply,
+		    res.create_time replytime,
+		    user.nick_name
+		  from t_consult req 
+		  left join t_consult res on req.idt_consult = res.reply_id
+		  left join t_user user on user.u_id = req.consult_userId
+		  where req.consult_type = 1 and req.state in (0,1) and res.content != ''
+		  <if test="type == 1">
+			AND ((req.product_id in (select fid_room from r_suit_room where fid_suit = ${productId})
+			    AND req.product_type = 2) or (req.product_id = ${productId} and req.product_type = 1))
+		  </if>
+		  <if test="type == 2">
+			AND ((req.product_id in (select fid_suit from r_suit_room where fid_room = ${productId})
+			    AND req.product_type = 1) or (req.product_id = ${productId} and req.product_type = 2))
+		  </if>
+		  <if test="type == 3">
+			AND req.product_id = ${productId} and req.product_type = 3
+		  </if>
+        ORDER BY req.create_time DESC
+		LIMIT #{from},#{size}
+	</select>
+	<select id="queryUserConsultCount" parameterType="map" resultType="java.lang.Integer">
+		select count(1) from t_consult req 
+		left join t_consult res on req.idt_consult = res.reply_id
+		where req.consult_type = 1 and req.state in (0,1) and res.content != ''
+		  <if test="type == 1">
+			AND ((req.product_id in (select fid_room from r_suit_room where fid_suit = ${productId})
+			    AND req.product_type = 2) or (req.product_id = ${productId} and req.product_type = 1))
+		  </if>
+		  <if test="type == 2">
+			AND ((req.product_id in (select fid_suit from r_suit_room where fid_room = ${productId})
+			    AND req.product_type = 1) or (req.product_id = ${productId} and req.product_type = 2))
+		  </if>
+		  <if test="type == 3">
+			AND req.product_id = ${productId} and req.product_type = 3
+		  </if>
+	</select>
+	<select id="queryRoomSingle" parameterType="map" resultMap="productSummaryMap">
+		SELECT DISTINCT m.*,t.name as product_type from
+		(
+		SELECT mtp.*, t_suit_room.name as room,t_suit_room.images AS room_images,t_suit_room.room_price FROM
+
+		( SELECT mtsp.fid_product as idt_product,mtsp.fid_room,
+		tp.name,tp.images,
+		tp.price,tp.price_market,tp.fid_product_type,mtsp.product_count
+		FROM
+		(SELECT mtrsr.fid_room,mtrsr.fid_suit,mtrrp.fid_product,mtrrp.product_count
+		FROM
+		(select * FROM r_suit_room WHERE fid_room = #{roomId}) mtrsr LEFT
+		JOIN
+		(SELECT * FROM r_room_product) mtrrp ON mtrsr.fid_room = mtrrp.fid_room) mtsp
+
+		INNER JOIN t_product tp ON mtsp.fid_product = tp.idt_product where
+		tp.status=1 and tp.price >0) mtp
+
+		INNER JOIN t_suit_room ON t_suit_room.idt_room = mtp.fid_room) m INNER JOIN
+		t_product_type t ON t.type_key = fid_product_type
+		ORDER BY m.fid_room ASC
+	</select>
+	<select id="querySameHouseRoom" parameterType="map" resultMap="previewResultMap">
+		select tr.idt_room sid,CONCAT(ts.name,' ',tr.name) as name, room_price price, tr.images from r_suit_room rsr 
+          left join t_suit_room tr on rsr.fid_room = tr.idt_room
+          left join t_suit ts on rsr.fid_suit = ts.idt_suit
+        where tr.room_type = (select room_type from t_suit_room where idt_room = ${roomId}) and ts.status = 1
+          and fid_suit in ( select fid_suit from r_house_suit where 
+          fid_house = (select fid_house from r_house_suit where fid_suit = (select fid_suit from r_suit_room where fid_room = ${roomId}))
+          and fid_suit <![CDATA[<>]]> (select fid_suit from r_suit_room where fid_room = ${roomId}))
+        ORDER BY tr.create_time DESC
+		LIMIT 0,2
+	</select>
+	<select id="queryGuessYouLikeRoom" parameterType="map" resultMap="previewResultMap">
+		select tr.idt_room sid,CONCAT(ts.name,' ',tr.name) as name, room_price price, tr.images from r_suit_room rsr 
+          left join t_suit_room tr on rsr.fid_room = tr.idt_room
+          left join t_suit ts on rsr.fid_suit = ts.idt_suit
+          left join r_house_suit rhs on ts.idt_suit = rhs.fid_suit
+          left join r_building_house rbh on rhs.fid_house = rbh.fid_house
+          left join t_building tb on rbh.fid_building = tb.idt_building
+          left join t_areas ta on tb.fid_district = ta.idt_areas
+        where tr.room_type = (select room_type from t_suit_room where idt_room = ${roomId}) and ts.status = 1
+          and ta.zipcode = ${cityCode}
+          and rsr.fid_suit in ( select idt_suit from t_suit where 
+          fid_style = (select fid_style from t_suit where idt_suit = (select fid_suit from r_suit_room where fid_room = ${roomId}))
+          and idt_suit <![CDATA[<>]]> (select fid_suit from r_suit_room where fid_room = ${roomId}))
+		ORDER BY tr.create_time DESC
+		LIMIT 0,2
+	</select>
+	<select id="queryRoomSales" parameterType="map" resultType="java.lang.Integer">
+		select count(1) from t_order where product_type = 3 
+		  and product_id = ${roomId} 
+		  and order_status in (2,5)
+	</select>
+	<select id="querySuitByProductId" parameterType="map" resultMap="previewResultMap">
+		select DISTINCT ts.idt_suit sid,ts.name,ts.price,ts.images from r_suit_room rsr 
+          left join r_room_product rrp on rsr.fid_room = rrp.fid_room
+          left join t_suit ts on rsr.fid_suit = ts.idt_suit
+        where fid_product = ${productId} and ts.status = 1
+		ORDER BY ts.create_time DESC
+		LIMIT 0,4
+	</select>
+	<insert id="addUserConsult" parameterType="map">
+        INSERT into t_consult(content, consult_phone, consult_userId,create_time, product_id, product_type, state, consult_type)
+        VALUES (#{content},#{phoneNumber},#{userId},now(),#{productId},#{productType},#{state},#{consultType})
+    </insert>
+    
+    
+    <resultMap id="suitProductResultMap" type="com.ihomefnt.o2o.intf.domain.product.doo.TSuitProduct">
+        <id property="productId" column="idt_product" />
+        <result column="product_name" property="productName" />
+        <result column="images" property="productImages" />
+        <result column="room_name" property="roomName" />
+        <result column="suit_name" property="suitName" />
+        <result column="suit_price" property="suitPrice" />
+        <result column="idt_room" property="roomId" />
+        <result column="idt_suit" property="suitId" />
+     </resultMap>
+    
+    <select id="querySuitProduct2" resultMap="suitProductResultMap" parameterType="map">
+		SELECT tp.idt_product, tp.name as product_name, tp.images, tr.name as room_name, ts.name as suit_name, ts.price as suit_price,
+			tr.idt_room, ts.idt_suit     
+			from t_product tp, t_suit_room tr, r_room_product rrp, t_suit ts, r_suit_room rsr  
+		WHERE ts.idt_suit = #{suitId}  AND ts.idt_suit = rsr.fid_suit 
+		AND rsr.fid_room = tr.idt_room AND tr.idt_room = rrp.fid_room AND tp.idt_product = rrp.fid_product 
+     </select>
+    
+    <resultMap id="suitHardResultMap" type="com.ihomefnt.o2o.intf.domain.product.doo.SuitHard">
+        <id property="hardId" column="idt_hard" />
+        <result column="hard_name" property="hardName" />
+        <result column="images" property="hardImages" />
+        <result column="color" property="hardColor" />
+        <result column="room_name" property="roomName" />
+        <result column="suit_name" property="suitName" />
+        <result column="idt_room" property="roomId" />
+        <result column="idt_suit" property="suitId" />
+     </resultMap>
+    
+    <select id="querySuitHard" resultMap="suitHardResultMap" parameterType="com.ihomefnt.o2o.intf.domain.product.vo.request.SuitHardRequest">
+		
+		SELECT ts.idt_suit, ts.name as suit_name, tr.idt_room, tr.name as room_name, th.idt_hard, th.name as hard_name, th.color, th.images        
+		from 
+		t_hard th, t_suit_room tr, r_room_hard rrh, 
+		t_suit ts, r_suit_room rsr  
+		WHERE ts.idt_suit = #{suitId} 
+		<if test="roomIdList != null" >
+        	AND tr.idt_room in
+            <foreach collection="roomIdList" item="item" index="index" open="(" close=")" separator=",">
+            	#{item}
+            </foreach>
+        </if>
+        <if test="hardIdList != null" >
+        	AND th.idt_hard in
+            <foreach collection="hardIdList" item="item" index="index" open="(" close=")" separator=",">
+            	#{item}
+            </foreach>
+        </if>
+		
+		AND ts.idt_suit = rsr.fid_suit AND rsr.fid_room = tr.idt_room 
+		AND tr.idt_room = rrh.fid_room AND th.idt_hard = rrh.fid_hard
+		
+		UNION ALL 
+		
+		SELECT ts.idt_suit, ts.name as suit_name, trt.idt_room_temp, trt.name as room_name, th.idt_hard, th.name as hard_name, th.color, th.images        
+		from 
+		t_hard th, t_room_temp trt, r_room_hard_temp rrht, 
+		t_suit ts, r_suit_room_temp rsrt  
+		WHERE ts.idt_suit = #{suitId} 
+		<if test="roomIdTempList != null" >
+        	AND trt.idt_room_temp in
+            <foreach collection="roomIdTempList" item="item" index="index" open="(" close=")" separator=",">
+            	#{item}
+            </foreach>
+        </if>
+        <if test="hardIdTempList != null" >
+        	AND th.idt_hard in
+            <foreach collection="hardIdTempList" item="item" index="index" open="(" close=")" separator=",">
+            	#{item}
+            </foreach>
+        </if>
+		
+		AND ts.idt_suit = rsrt.fid_suit AND rsrt.fid_room_temp = trt.idt_room_temp 
+		AND trt.idt_room_temp = rrht.fid_room_temp AND th.idt_hard = rrht.fid_hard 
+		
+    </select>
+    
+    
+    <select id="queryNameByEsId" resultType="java.lang.String"  parameterType="map">
+		SELECT 
+			name
+		 FROM  t_exper_store
+		 WHERE id=#{esId}
+	</select>
+	
+	<select id="queryButtonSort290"  resultMap="buttonResultMap">
+        SELECT button_name, icon, image_url,node_id,TYPE,filter_id  
+		FROM t_button WHERE button_id > 28 AND button_id <![CDATA[<]]> 38 
+		and status = 1 ORDER BY button_sort ASC, type ASC
+	</select>
+    
+</mapper>

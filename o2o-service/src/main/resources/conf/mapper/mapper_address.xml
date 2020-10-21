@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihomefnt.o2o.intf.dao.address.AddressDao">
+
+	<resultMap id="receiveAddressMap" type="com.ihomefnt.o2o.intf.domain.address.doo.TReceiveAddressDo">
+		<result property="pcdAddress" column="pcd_address" />
+		<result property="purchaserName" column="purchaser_name" />
+		<result property="purchaserTel" column="purchaser_tel" />
+		<result property="street" column="street" />
+		<result property="areaId" column="fid_area" />
+	</resultMap>
+	
+	<select id="queryAddressByUserId" resultMap="receiveAddressMap" parameterType="java.lang.Long">
+		SELECT pcd_address, purchaser_name, purchaser_tel, street, fid_area FROM t_receive_address WHERE user_id=#{userId}
+	</select>
+	
+    <insert id="addAddress" parameterType="com.ihomefnt.o2o.intf.domain.address.doo.TReceiveAddressDo">
+    	replace into t_receive_address(user_id,pcd_address,purchaser_name,purchaser_tel,create_time,street,fid_area)
+    	VALUES (#{userId},#{pcdAddress},#{purchaserName},#{purchaserTel},now(),#{street},#{areaId})
+    </insert>
+</mapper>

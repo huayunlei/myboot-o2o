@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihomefnt.o2o.intf.dao.designer.DesignerViewDao">
+
+    <insert id="addDesignerView" parameterType="com.ihomefnt.o2o.intf.domain.designer.dto.DesignerView" useGeneratedKeys="true" keyProperty="designerViewId">
+        INSERT INTO t_designer_view
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="userId != null" >
+	        user_id,
+	      </if>        
+	      <if test="designerId != null" >
+	        designer_id,
+	      </if>        
+      </trim>
+      <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="userId != null" >
+	        #{userId},
+	      </if>        
+	      <if test="designerId != null" >
+	        #{designerId},
+	      </if>        
+     </trim>
+    </insert>
+</mapper>

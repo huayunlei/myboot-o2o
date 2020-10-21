@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihomefnt.o2o.intf.dao.designer.DesignerDao">
+
+    <resultMap id="designerPicResultMap"
+               type="com.ihomefnt.o2o.intf.domain.designer.dto.DesignerPic">
+        <id property="id" column="id"/>
+        <result property="ownerId" column="owner_id"/>
+        <result property="url" column="url"/>
+        <result property="createtime" column="create_time"/>
+        <result property="picId" column="id"/>
+        <result property="width" column="width"/>
+        <result property="height" column="height"/>
+    </resultMap>
+
+    <select id="queryDesignerPic" resultMap="designerPicResultMap"
+            parameterType="map">
+        SELECT id,url,width,height FROM (SELECT id,url,width,height FROM
+        t_picture WHERE status=1
+        <if test="designerId != null and '' != designerId">
+            <![CDATA[  
+              and owner_id=#{designerId}  
+            ]]>
+        </if>
+        <if test="picId != null and '' != picId">
+            <![CDATA[  
+               AND id < #{picId}
+            ]]>
+        </if>
+        )t WHERE 1=1 ORDER BY id DESC LIMIT 0,#{count};
+    </select>
+
+    <select id="queryDesignerPicById" resultMap="designerPicResultMap"
+            parameterType="java.lang.Long">
+        SELECT * FROM t_picture WHERE id=#{id}
+    </select>
+
+    <select id="queryDesignerPicShiftLeft" resultMap="designerPicResultMap"
+            parameterType="map">
+        SELECT * FROM t_picture WHERE status=1
+        <if test="designerId != null and '' != designerId">
+            <![CDATA[  
+              and owner_id=#{designerId}  
+            ]]>
+        </if>
+        <if test="id != null and '' != id">
+            <![CDATA[  
+               AND id < #{id}
+            ]]>
+        </if>
+        ORDER BY id DESC LIMIT 0,2;
+    </select>
+
+    <select id="queryDesignerPicShiftRight" resultMap="designerPicResultMap"
+            parameterType="map">
+        SELECT * FROM t_picture WHERE status=1
+        <if test="designerId != null and '' != designerId">
+            <![CDATA[  
+              and owner_id=#{designerId}  
+            ]]>
+        </if>
+        <if test="id != null and '' != id">
+            <![CDATA[  
+               AND id > #{id}
+            ]]>
+        </if>
+        ORDER BY id ASC LIMIT 0,2;
+    </select>
+    <resultMap id="designerModelMap" type="com.ihomefnt.o2o.intf.domain.designer.dto.DesignerModel">
+        <result property="designerId" column="idt_designer"/>
+        <result property="avatar" column="avatar"/>
+        <result property="name" column="name"/>
+        <result property="brief" column="brief"/>
+        <result property="mobile" column="mobile"/>
+        <result property="nick" column="nick"/>
+        <result property="gender" column="gender"/>
+        <result property="telephone" column="telephone"/>
+        <result property="company" column="company"/>
+        <result property="designCase" column="design_case"/>
+        <result property="residency" column="residency"/>
+    </resultMap>
+
+    <resultMap id="designerSuitMap" type="com.ihomefnt.o2o.intf.domain.designer.dto.DesignerSuit">
+        <result property="suitId" column="idt_suit"/>
+        <result property="suitName" column="name"/>
+        <result property="rawImages" column="images"/>
+    </resultMap>
+    <resultMap id="designerPicMap" type="com.ihomefnt.o2o.intf.domain.designer.dto.DesignerPicture">
+        <result property="picId" column="id"/>
+        <result property="url" column="url"/>
+        <result property="width" column="width"/>
+    </resultMap>
+    <select id="queryDesignerInfo" resultMap="designerModelMap" parameterType="map">
+        <!-- select * from t_designer where mobile=#{mobile}; -->
+        
+        SELECT td.idt_designer, tu.name, tu.nick_name AS nick, tu.gender, tu.mobile, tu.telephone, td.design_case, 
+		tu.u_img AS avatar, tu.brief, td.company, tu.residency
+		FROM t_user tu, t_designer td 
+		WHERE tu.mobile = #{mobile} AND tu.mobile = td.mobile
+    </select>
+
+    <select id="loadDesignerSuitCount" parameterType="map" resultType="java.lang.Integer">
+       SELECT count(1) from t_suit where fid_designer = #{fid_designer} and status = 1;
+    </select>
+
+    <select id="loadDesignerPicCount" parameterType="map" resultType="java.lang.Integer">
+        SELECT count(1) from t_picture where owner_id = #{fid_designer} and status = 1;
+    </select>
+    <select id="loadDesignerSuitImg" parameterType="map" resultType="java.lang.String">
+        select images from t_suit where idt_suit = (select max(idt_suit) from t_suit where fid_designer = #{fid_designer});
+    </select>
+
+    <select id="loadDesignerSuitList" parameterType="map" resultMap="designerSuitMap">
+        SELECT * from t_suit where fid_designer = #{designerId} and status = 1 limit #{from}, #{size};
+    </select>
+    <select id="loadDesignerPicList" parameterType="map" resultMap="designerPicMap">
+         SELECT * from t_picture where owner_id = #{designerId} and status = 1 limit #{from}, #{size};
+    </select>
+    <select id="loadDesignerInfoById" resultMap="designerModelMap" parameterType="map">
+        <!-- select * from t_designer where idt_designer=#{designerId}; -->
+        
+        SELECT td.idt_designer, tu.name, tu.nick_name AS nick, tu.gender, tu.mobile, tu.telephone, td.design_case, 
+		tu.u_img AS avatar, tu.brief, td.company, tu.residency 
+		FROM t_user tu, t_designer td 
+		WHERE td.idt_designer = #{designerId} AND tu.mobile = td.mobile 
+    </select>
+</mapper>

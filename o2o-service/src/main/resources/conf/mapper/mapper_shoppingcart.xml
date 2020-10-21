@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihomefnt.o2o.intf.dao.cart.ShoppingCartDao">
+
+	<resultMap id="shoppingCartOnResultMap" type="com.ihomefnt.o2o.intf.domain.product.doo.Room">
+		<result property="name" column="name" />
+        <collection property="productSummaryList" resultMap="productListResultMap" />
+	</resultMap>
+
+	<resultMap id="productListResultMap" type="com.ihomefnt.o2o.intf.domain.product.doo.ProductSummaryResponse">
+		<id property="productId" column="idt_product" />
+		<result property="name" column="product_name" />
+		<result property="imagesUrl" column="images" />	
+		<result property="priceCurrent" column="price" />
+		<result property="priceMarket" column="price_market" />
+		<result property="productCount" column="amount" />
+	</resultMap>
+
+	<select id="queryProductInRoom" resultMap="productListResultMap">
+		SELECT 
+			CASE  WHEN tpt.name  IN ('客厅','餐厅','卧室','书房','儿童房','阳台') THEN tpt.name  ELSE '其他'  END product_name,
+			tp.idt_product
+		FROM 
+			t_product_type tpt,
+			t_product tp
+		WHERE   tpt.parent_key IN (2,1)
+			AND tpt.type_key !=2
+			AND FIND_IN_SET(tp.fid_product_type,tpt.leaf)
+	</select>
+	
+	<select id="queryProductInRoomByProductId" resultMap="productListResultMap" parameterType="map">
+		SELECT 
+			CASE  WHEN tpt.name  IN ('客厅','餐厅','卧室','书房','儿童房','阳台') THEN tpt.name  ELSE '其他'  END product_name,
+			tp.idt_product
+		FROM 
+			t_product_type tpt,
+			t_product tp
+		WHERE   tpt.parent_key IN (2,1)
+			AND tpt.type_key !=2
+			AND FIND_IN_SET(tp.fid_product_type,tpt.leaf)
+		<if test="productId != null" >
+            AND tp.idt_product = #{productId}
+        </if>				
+	</select>	
+	
+	<select id="queryProductInRoomByProductIdList" resultMap="productListResultMap" parameterType="map">
+		SELECT 
+			CASE  WHEN tpt.name  IN ('客厅','餐厅','卧室','书房','儿童房','阳台') THEN tpt.name  ELSE '其他'  END product_name,
+			tp.idt_product
+		FROM 
+			t_product_type tpt,
+			t_product tp
+		WHERE   tpt.parent_key IN (2,1)
+			AND tpt.type_key !=2
+			AND FIND_IN_SET(tp.fid_product_type,tpt.leaf)
+			
+		<if test="productIdList != null" >
+		  AND tp.idt_product in
+            <foreach collection="productIdList" item="item" index="index" open="(" close=")" separator=",">
+            	#{item}
+            </foreach>
+        </if>			
+	</select>				
+		
+	<select id="queryShoppingCartOnSlave" resultMap="shoppingCartOnResultMap" parameterType="java.lang.Long">
+		SELECT 
+			CASE  WHEN tpt.name  IN ('客厅','餐厅','卧室','书房','儿童房','阳台') THEN tpt.name  ELSE '其他'  END NAME,
+			tp.idt_product,
+			tp.name product_name,
+			tp.images,
+			tp.price,
+			tp.price_market,
+			tsc.amount
+		FROM 
+			t_shopping_cart tsc,
+			t_product_type tpt,
+			t_product tp left join t_series ts on tp.fid_series=ts.id
+		WHERE 
+			tsc.productId=tp.idt_product
+			AND tpt.parent_key in (2,1)
+			AND tpt.type_key !=2
+			AND FIND_IN_SET(tp.fid_product_type,tpt.leaf)
+			AND tp.status=1
+			AND (ts.price_hide = 0 or ts.price_hide is null)
+			
+			AND tsc.userId = #{userId}
+		ORDER BY type_key ASC,tsc.create_time desc
+	</select>
+
+	<resultMap id="shoppingCartOffResultMap" type="com.ihomefnt.o2o.intf.domain.cart.dto.ShoppingCartProductDto">
+		<id property="productId" column="idt_product" />
+		<result property="name" column="product_name" />
+		<result property="imagesUrl" column="images" />	
+		<result property="priceCurrent" column="price" />
+		<result property="priceMarket" column="price_market" />
+		<result property="typeKey" column="type_key" />
+	</resultMap>
+
+	<select id="queryShoppingCartOffSlave" resultMap="shoppingCartOffResultMap" parameterType="java.lang.Long">
+		SELECT 
+			tp.idt_product,
+			tp.name product_name,
+			tp.images,
+			tp.price,
+			tp.price_market,
+			(SELECT tpt2.type_key FROM t_product_type tpt2 WHERE  tpt2.parent_key =tpt.type_key AND FIND_IN_SET(tp.fid_product_type,tpt2.leaf)) type_key
+		FROM 
+			t_shopping_cart tsc,
+			t_product_type tpt,
+			t_product tp left join t_series ts on tp.fid_series=ts.id
+		WHERE 
+			tsc.productId=tp.idt_product
+			AND tpt.parent_key in (2,1)
+			AND tpt.type_key !=2
+			AND FIND_IN_SET(tp.fid_product_type,tpt.leaf)
+			AND (tp.status=0 or ts.price_hide=1)
+			AND tsc.userId = #{userId}
+		ORDER BY type_key ASC,tsc.create_time desc
+	</select>
+
+    <insert id="addShoppingCartBatch" parameterType="java.util.List">   
+		INSERT INTO t_shopping_cart(userId, productId, create_time,amount)
+		VALUES
+        <foreach collection="list" item="item" index="index" separator="," >  
+            (#{item.userId},#{item.productId},now(),#{item.amount}) 
+        </foreach>  
+    </insert>
+
+	<select id="queryShoppingCartCnt" resultType="java.lang.Integer" parameterType="java.lang.Long">
+		SELECT 
+			sum(tsc.amount) amount
+		FROM 
+			t_shopping_cart tsc,
+			t_product_type tpt,
+			t_product tp left join t_series ts on tp.fid_series=ts.id
+		WHERE 
+			tsc.productId=tp.idt_product
+			AND tpt.parent_key in (2,1)
+			AND tpt.type_key !=2
+			AND FIND_IN_SET(tp.fid_product_type,tpt.leaf)
+			AND tp.status=1
+			AND (ts.price_hide = 0 or ts.price_hide is null)
+			
+			AND tsc.userId = #{userId}
+	</select>
+
+	<select id="queryShoppingCartProduct" resultType="java.lang.Long" parameterType="java.lang.Long">
+		SELECT 
+			productId
+		FROM 
+			t_shopping_cart
+			WHERE userId = #{userId} 
+	</select>
+
+    <delete id="deleteOffProduct" parameterType="map">
+		DELETE  FROM t_shopping_cart 
+		WHERE userId = #{userId} 
+		<if test="productId != null">
+			and productId=#{productId}
+		</if>
+		<if test="productId == null">
+			and productId in (SELECT idt_product from t_product p left join t_series s on p.fid_series=s.id where (p.status=0 or s.price_hide=1))
+		</if>				
+    </delete>
+    
+    <resultMap id="productInfoMap" type="com.ihomefnt.o2o.intf.domain.product.doo.ProductOrder">
+		<result property="productId" column="idt_product" />
+		<result property="productName" column="name" />
+	</resultMap>
+	
+	<select id="queryProductInfo" resultMap="productInfoMap" parameterType="map">
+		SELECT 
+			idt_product,
+			name
+		FROM 
+			t_product
+			WHERE idt_product in 
+			
+		<if test="productId != null" >
+            <foreach collection="productId" item="item" index="index" open="(" close=")" separator=",">
+            	#{item}
+            </foreach>
+        </if>
+	</select>  
+</mapper>

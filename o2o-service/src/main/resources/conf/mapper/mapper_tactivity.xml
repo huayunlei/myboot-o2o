@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihomefnt.o2o.intf.dao.tactivity.TmpActivityDao">
+    <resultMap id="tactivityResultMap" type="com.ihomefnt.o2o.intf.domain.tactivity.dto.TTmpActivity">
+        <id property="activityId" column="idt_activity" />
+        <result column="name" property="name"/>
+        <result column="mobile" property="mobile"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="status" property="status"/>
+    </resultMap>
+    
+     <select id="queryTActivity" parameterType="map" resultMap="tactivityResultMap">
+        SELECT idt_activity,
+               mobile,
+               create_time,
+               status,
+               update_time,
+               name
+        FROM t_tmp_activity 
+        WHERE 1=1 
+        <if test="status!=null and status!=''">
+            and status = #{status}
+        </if> 
+        <if test="mobile!=null and mobile!=''">
+            and mobile = #{mobile}
+        </if> 
+        <if test="activateCode!=null and activateCode!=''">
+            AND activate_code=#{activateCode}
+        </if>               
+        order by update_time desc
+    </select>
+ 
+    <update id="updateTActivityById" parameterType="com.ihomefnt.o2o.intf.domain.tactivity.dto.TTmpActivity" >
+	    update t_tmp_activity
+	    <set >
+	      <if test="activateCode!=null and activateCode!=''">
+	        activate_code=#{activateCode},
+	      </if>        
+	      <if test="status!=null and status!=''">
+	        status=#{status},
+	      </if>      
+	      <if test="updateTime != null" >
+	        update_time = #{updateTime},
+	      </if>	
+	    </set>
+	    where idt_activity = #{activityId}
+	</update>
+
+    <update id="updateTActivityByMobile" parameterType="com.ihomefnt.o2o.intf.domain.tactivity.dto.TTmpActivity" >
+	    update t_tmp_activity
+	    <set >       
+	      <if test="status!=null and status!=''">
+	        status=#{status},
+	      </if>      
+	      <if test="updateTime != null" >
+	        update_time = #{updateTime},
+	      </if>	
+	    </set>
+	    where mobile = #{mobile}
+	    AND activate_code=#{activateCode}
+	    AND status=1
+	</update>        	            	        
+</mapper>

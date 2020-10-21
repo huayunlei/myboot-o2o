@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihomefnt.o2o.intf.dao.sales.SalesDao">
+    <resultMap id="resCustomerMap" type="com.ihomefnt.o2o.intf.proxy.sales.dto.CustomerInfo">
+        <result property="mobile" column="customer_mobile"/>
+        <result property="createDate" column="create_date"/>
+        <result property="deadline" column="validate_date"/>
+        <result property="status" column="bind_status"/>
+        <result property="id" column="idt_sales_customer"/>
+    </resultMap>
+
+    <select id="queryCustomerList" parameterType="map" resultMap="resCustomerMap">
+        SELECT * FROM t_sales_customer where fid_sales = #{sales_id} ORDER by create_date DESC limit #{from}, #{size};
+    </select>
+
+    <select id="queryCount" parameterType="map" resultType="java.lang.Integer">
+        SELECT count(1) from t_sales_customer where fid_sales = #{sales_id};
+    </select>
+
+    <select id="queryCustomerCountByStatus" parameterType="map" resultType="java.lang.Integer">
+        SELECT count(1) from t_sales_customer where fid_sales = #{sales_id} and bind_status = #{status};
+    </select>
+
+    <select id="querySalesIdPerCustomer" parameterType="map" resultType="java.lang.Long">
+        SELECT fid_sales from t_sales_customer where customer_mobile = #{mobile} and bind_status != 3;
+    </select>
+
+    <insert id="bindSalesCustomer" parameterType="map">
+        INSERT into t_sales_customer(fid_sales,customer_mobile,create_date,validate_date,bind_status)
+        VALUES (#{sales_id},#{mobile}, date(now()), date_add(date(now(0)),INTERVAL 30 day),#{status});
+    </insert>
+
+    <select id="loadInvitedCustomers" parameterType="map" resultMap="resCustomerMap">
+        SELECT * from t_sales_customer where customer_mobile = #{mobile} and bind_status = 1;
+    </select>
+    <update id="updatePerId" parameterType="map">
+       UPDATE t_sales_customer set bind_status = #{status} where idt_sales_customer = #{id};
+    </update>
+    <update id="updateValidationStatus">
+        UPDATE t_sales_customer set bind_status = 3 where now() > validate_date and bind_status = 1;
+    </update>
+    <select id="getBindCountToday" parameterType="map" resultType="java.lang.Integer">
+        select count(1) from t_sales_customer  where DATE(now()) = DATE (create_date);
+    </select>
+</mapper>

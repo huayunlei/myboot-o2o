@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihomefnt.o2o.intf.dao.comment.CommentDao">
+
+    <resultMap id="userCommentResultMap" type="com.ihomefnt.o2o.intf.domain.comment.dto.UserCommentDto">
+		<id property="commentId" column="id" />
+		<result property="content" column="comment" />
+		<result property="createTime" column="create_time" />
+		<result property="userId" column="editor" />
+		<result property="userName" column="editor_name" />
+		<result property="starCount" column="star_count" />
+		<result property="images" column="images" />
+		<result property="targetId" column="target_id" />
+		<result property="customerNickName" column="nick_name" />
+	</resultMap>
+	
+	<select id="queryUserCommentList" parameterType="map" resultMap="userCommentResultMap">
+		select id, comment,create_time,editor, editor_name,star_count,images,target_id,user.nick_name
+		  from t_comment left join t_user user on user.u_id = t_comment.editor where target_id = ${productId}
+		  AND type = ${type}
+          AND status = 1
+        ORDER BY create_time DESC
+		LIMIT #{from},#{size}
+	</select>
+	
+	<select id="queryUserCommentCount" parameterType="map" resultType="java.lang.Integer">
+		select count(1) from t_comment where target_id = ${productId}
+		  AND type = ${type}
+          AND status = 1
+	</select>
+	
+    <insert id="addUserComment" parameterType="map">
+        INSERT into t_comment(comment, editor, editor_name, target_id, type, status)
+        VALUES (#{content},#{editor},#{phoneNumber},#{targetId},#{targetType},#{status})
+    </insert>
+    
+</mapper>

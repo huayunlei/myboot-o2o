@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihomefnt.o2o.intf.domain.coupon.dto.Voucher">
+
+	<!-- 抵用券 -->
+	<resultMap id="voucherResultMap" type="com.ihomefnt.o2o.intf.domain.coupon.dto.Voucher">
+		<id property="voucherId" column="voucherId" />
+		<result property="voucherName" column="voucherName" />
+		<result property="moneyLimit" column="moneyLimit" />
+		<result property="parValue" column="parValue" />
+		<result property="startTimestamp" column="startTime" />
+		<result property="createTimestamp" column="createTime" />
+		<result property="endTimestamp" column="endTime" />
+		<result property="voucherStatus" column="voucherStatus" />
+		<result property="remark" column="remark" />
+		<result property="voucherDesc" column="use_summary" />
+	</resultMap>
+	
+	<!-- 根据用户手机号码查询所有抵用券 -->
+	<select id="queryVoucherByMobile" parameterType="java.lang.String" resultMap="voucherResultMap">
+		SELECT
+		    td.idt_voucher_detail as voucherId,
+		    td.create_time as createTime,
+			tv.`name` AS voucherName,
+			tv.use_threshold AS moneyLimit,
+			tv.par_value AS parValue,
+			tv.use_begin_time AS startTime,
+			tv.use_end_time AS endTime,
+			td.status as voucherStatus,
+			tv.use_description as remark,
+			tv.use_summary 
+		FROM
+			t_voucher_detail td
+		LEFT JOIN t_voucher tv ON td.fid_voucher = tv.idt_voucher
+		WHERE
+		    1=1
+			and td.customer_mobile = #{mobile}
+			and td.status in(2,3,4,5)
+			and tv.use_end_time >= ADDDATE(NOW(),-30)
+			ORDER BY tv.par_value DESC
+	</select>
+	
+	<!-- 根据主键查询抵用券-->	
+	<select id="queryVoucherById" parameterType="java.lang.Long" resultMap="voucherResultMap">
+		SELECT
+		    td.idt_voucher_detail as voucherId,
+		    tv.use_description as remark,			
+			tv.use_threshold AS moneyLimit,
+			tv.par_value AS parValue
+		FROM
+			t_voucher_detail td
+		LEFT JOIN t_voucher tv ON td.fid_voucher = tv.idt_voucher
+		WHERE
+		    1=1
+			and td.idt_voucher_detail = #{voucherId}
+			and td.status =2
+	</select>
+	
+		<!-- 根据主键查询抵用券-->	
+	<select id="queryVoucherByPK" parameterType="java.lang.Long" resultMap="voucherResultMap">
+		SELECT
+		    td.idt_voucher_detail as voucherId,
+		    tv.use_description as remark,			
+			tv.use_threshold AS moneyLimit,
+			tv.par_value AS parValue
+		FROM
+			t_voucher_detail td
+		LEFT JOIN t_voucher tv ON td.fid_voucher = tv.idt_voucher
+		WHERE
+		    1=1
+			and td.idt_voucher_detail = #{voucherId}
+
+	</select>
+	
+	<!-- 根据用户手机号码统计抵用券总额 -->
+	<select id="queryVoucherAmountByMobile" parameterType="java.lang.String" resultType="java.lang.Double">
+		SELECT
+			ifnull(SUM(tv.par_value),0) as amount
+		FROM
+			t_voucher_detail td
+		LEFT JOIN t_voucher tv ON td.fid_voucher = tv.idt_voucher
+		WHERE
+		    1=1
+			and td.customer_mobile = #{mobile}
+			and td.status in(2,3,4,5)
+			and tv.use_end_time >= NOW()
+	</select>
+	
+	<!-- 插入抵用券日志 -->
+	<insert id="insertVoucherLog" parameterType="com.ihomefnt.o2o.intf.domain.coupon.dto.VoucherLog">
+    	insert into t_voucher_log(fid_voucher_detail,voucher_status,type,create_time)
+    	VALUES (#{voucherId},#{voucherStatus},#{operateType},now())
+    </insert>
+    
+    <!-- 根据主键修改抵用券-->
+    <update id="updateVoucherById" parameterType="com.ihomefnt.o2o.intf.domain.coupon.dto.Voucher">
+        UPDATE t_voucher_detail
+        <set>
+            status=#{voucherStatus}
+        </set>
+        WHERE  idt_voucher_detail=#{voucherId}				       
+    </update>      	    
+</mapper>

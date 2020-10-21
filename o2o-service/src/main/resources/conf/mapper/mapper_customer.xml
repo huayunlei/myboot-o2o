@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihomefnt.o2o.intf.dao.customer">
+	
+	<select id="getCustomerCountByMobile" parameterType="java.lang.String" resultType="java.lang.Integer">		
+			SELECT 
+			  COUNT(1)
+			FROM
+			  t_customer
+			WHERE 1 = 1        
+	        AND mobile = #{mobile}		
+	        and  STATUS =1						
+	</select>
+	
+	<select id="getOrderCountByMobile" parameterType="java.lang.String" resultType="java.lang.Integer">		
+			SELECT 
+			  COUNT(1)
+			FROM
+			  t_order
+			WHERE 1 = 1 
+			and order_status  in (0,1,2,4,5,6)
+			AND purchaser_tel = #{mobile}
+		
+	</select>	
+	
+	<select id="getFamilyOrderCountByMobile" parameterType="java.lang.String" resultType="java.lang.Integer">		
+			SELECT 
+			  COUNT(1)
+			FROM
+			  t_family_order
+			WHERE 1 = 1 
+			and status  in (1,2,3,4,5)
+			AND purchaser_tel = #{mobile}	
+	</select>
+	
+	<select id="getAppCustomerCountByMobile" parameterType="java.lang.String" resultType="java.lang.Integer">		
+			SELECT 
+			  COUNT(1)
+			FROM
+			  t_app_customer
+			WHERE 1 = 1 
+			and status  in (1,2,3,4,6)	
+			AND mobile = #{mobile}				
+	</select>	
+	
+	<select id="getExceededByAdviser" parameterType="java.lang.Long" resultType="java.lang.Integer">		
+			SELECT 
+			  COUNT(1)
+			FROM
+			  t_app_customer
+			WHERE 1 = 1 
+			and adviser = #{adviser}
+			AND TO_DAYS(create_time)=TO_DAYS(NOW())		
+	</select>
+	
+	<select id="getCountByAdviser" parameterType="java.lang.Long" resultType="java.lang.Integer">		
+			SELECT 
+			  COUNT(1)
+			FROM
+			  t_app_customer
+			WHERE 1 = 1 
+			and adviser = #{adviser}	
+	</select>
+	
+	<select id="getStoreCountByAdviser" parameterType="java.lang.Long" resultType="java.lang.Integer">		
+			SELECT 
+			  COUNT(1)
+			FROM
+			  t_app_customer
+			WHERE 1 = 1 
+			and adviser = #{adviser}	
+			and status  in (2,3,4,6)
+	</select>
+	
+	<select id="getOrderPriceTotalByAdviser" parameterType="java.lang.Long" resultType="java.lang.Double">		
+			SELECT 
+			  ifnull(SUM(price),0)
+			FROM
+			  t_app_customer
+			WHERE 1 = 1 
+			and adviser = #{adviser}	
+	</select>			
+	
+    <resultMap id="customerMap" type="com.ihomefnt.o2o.intf.domain.customer.doo.CustomerItemDo">
+        <id property="customerId" column="idt_app_customer"/>
+        <result property="name" column="name"/>
+        <result property="mobile" column="mobile"/>
+        <result property="gender" column="gender"/>
+        <result property="customerType" column="status"/>
+        <result property="appointmentTime" column="create_time"/>
+    </resultMap>    
+    <select id="getCustomerListByAdviser" parameterType="map" resultMap="customerMap">
+			SELECT idt_app_customer,name,mobile,gender,status,create_time
+			FROM  t_app_customer
+	        where 1=1	        
+		<if test="adviser != null ">
+	        <![CDATA[          
+	        AND adviser=#{adviser}
+	        ]]>
+		</if>
+		<if test="status != null ">
+	        <![CDATA[          
+	        AND status=#{status}
+	        ]]>
+		</if>	
+			ORDER BY create_time desc		 
+    </select> 
+    
+    <resultMap id="commissionInventoryMap" type="com.ihomefnt.o2o.intf.domain.customer.doo.CommissionInventoryDo">
+        <id property="customerId" column="idt_app_customer"/>
+        <result property="name" column="name"/>
+        <result property="mobile" column="mobile"/>
+        <result property="gender" column="gender"/>
+        <result property="appointmentTime" column="create_time"/>
+        <result property="orderMoney" column="price"/>
+        <result property="storeMoney" column="storeMoney"/>
+    </resultMap>    
+    <select id="getCommissionInventoryListByAdviser" parameterType="java.lang.Long" resultMap="commissionInventoryMap">
+			SELECT idt_app_customer,name,mobile,gender,create_time,price,50 storeMoney
+			FROM  t_app_customer
+	        where 1=1	                
+	        AND adviser=#{adviser}
+			and status  in (2,3,4,6)
+			ORDER BY create_time desc		 
+    </select>     
+       
+    <select id="getCustomerByPK" parameterType="java.lang.Long"  resultType="com.ihomefnt.o2o.intf.domain.customer.doo.CustomerDetailDo">
+			SELECT idt_app_customer as customerId,name,mobile,gender,status as customerType,
+			       create_time as appointmentTimestamp,building_name as customerBuilding,description as remark
+			FROM  t_app_customer
+	        where idt_app_customer=#{customerId}
+    </select>   
+    
+        <select id="getCustomerByMobile" parameterType="java.lang.String" resultType="com.ihomefnt.o2o.intf.domain.customer.doo.CustomerDetailDo">
+			SELECT idt_app_customer as customerId,name,mobile,gender,status as customerType,
+			       create_time as appointmentTimestamp,building_name as customerBuilding,description as remark
+			FROM  t_app_customer
+	        where mobile=#{mobile}
+	        limit 1
+    </select>   		
+	
+    <insert id="invitingCustomer" parameterType="com.ihomefnt.o2o.intf.domain.customer.doo.CustomerDo">
+    	insert into t_app_customer(name,mobile,gender,building_name,description,adviser,adviser_cn,create_time,status)
+    	VALUES (#{name},#{mobile},#{gender},#{customerBuilding},#{remark}, #{adviser},#{adviserName},now(),1)
+    </insert>			
+	
+</mapper>

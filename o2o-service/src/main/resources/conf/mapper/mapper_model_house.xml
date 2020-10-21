@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihomefnt.o2o.intf.dao.house.ModelHouseDao">
+
+	<insert id="enrollModelHouse" parameterType="com.ihomefnt.o2o.intf.domain.house.dto.TModelHouses"
+	    useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_model_houses(mobile, name, style_name,material, budget, create_time,address)
+		VALUES (#{mobile},#{name},#{styleName},#{material},#{budget},now(),#{address})
+	</insert>
+		
+	<select id="queryEnrollList" resultType="java.lang.String">
+		SELECT mobile FROM t_model_houses  order by create_time desc
+	</select>
+
+	<resultMap type="com.ihomefnt.o2o.intf.domain.building.doo.Building" id="buildingMap">
+		<result column="idt_building" property="idtBuilding"/>
+		<result column="name" property="name"/>
+	</resultMap>
+	
+	<select id="queryBuildingById" resultMap="buildingMap">
+		SELECT idt_building,name 
+		FROM t_building WHERE idt_building = 
+			(SELECT fid_building FROM r_building_house WHERE fid_house = #{houseId})
+	</select>
+	
+	<resultMap type="com.ihomefnt.o2o.intf.domain.house.dto.THouse" id="houseMap">
+		<result column="idt_house" property="houseId"/>
+		<result column="name" property="houseName"/>
+		<result column="size" property="area"/>
+		<result column="normal_pic" property="pictureUrlOriginal"/>
+		<result column="room" property="chamber"/>
+		<result column="living" property="hall"/>
+		<result column="toilet" property="toilet"/>
+		<result column="balcony" property="balcony"/>
+		<result column="kitchen" property="kitchen"/>
+		<result column="has_hidden" property="hasHidden"/>
+	</resultMap>
+	<select id="queryHouseById" resultMap="houseMap" parameterType="Long">
+		SELECT idt_house,name,normal_pic,size,room,living,toilet,balcony,kitchen,has_hidden
+		FROM t_house
+		WHERE idt_house = #{houseId}
+	</select>
+	
+	<resultMap type="com.ihomefnt.o2o.intf.domain.suit.dto.TSuit" id="suitMap">
+		 <result column="idt_suit" property="suitId"/>
+		 <result column="suitName" property="suitName"/>
+		 <result column="styleName" property="styleName"/>
+		 <result column="price" property="price"/>
+		 <result column="off_line_experience" property="offLineExperience"/>
+		 <result column="images" property="suitImages"/>
+	</resultMap>
+	<select id="querySuitList" resultMap="suitMap" parameterType="Long">
+			SELECT idt_suit,suitName,styleName,price,off_line_experience,images
+			FROM 
+				(SELECT idt_suit,name suitName,price,off_line_experience,images,fid_style 
+					FROM t_suit 
+					WHERE idt_suit in (SELECT fid_suit from r_house_suit where fid_house = #{houseId})
+					AND status = 1
+					)t1
+				LEFT JOIN (SELECT name styleName,style_key FROM t_style) t2 
+				ON t2.style_key = t1.fid_style
+				ORDER BY off_line_experience DESC
+	</select>
+	
+</mapper>

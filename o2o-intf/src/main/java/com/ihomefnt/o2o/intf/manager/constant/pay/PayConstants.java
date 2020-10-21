@@ -1,0 +1,12 @@
+package com.ihomefnt.o2o.intf.manager.constant.pay;
+
+/**
+ * @author liguolin
+ * @create 2018-10-09 10:30
+ **/
+public interface PayConstants {
+
+    String PRIVATE_KEY_FGW  =   "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAL8stpAf/FAbYwO1gdIUlJDOQkogn8ON2z74HvlYv+a7F+jQGwPi3N14sDSEdbG07dW0y13qyjWebMRGjUjdRMJbPZ65rMbUtXLOe+tQTzTnQQwHjy3unEhDjuQbaote9dR9NkIU5MjUViBZkcJuayDWFs0hnOeO9rOuuyimtePJAgMBAAECgYBfaS1kGNKQGFr+SuQTuPm8m3QyEr4plu7JKoQq5cRAnzd7lgElm1+nmMg4LbOfkTDx611j7f4lbH/UJXH135ikmcq6bNWjLX3upzKEakiGKp4PODzX69A5AOF5uPRv93WYh6EP+3j+OHcwxjhslvZLAPahff7d+EV5mN+BRMbMQQJBAPEJxnhCdbz/d2GipJ6yECBCg9UceN8OGrZ8fi2cog9CChoDfmvMFeyk7S3+pL6d1CUKzqzDDPbX2wzSCwqsJm0CQQDLCpR6hPWOi3c0nJMDycjNmS0DHGRIYIaEkXRHq7dwiA3oZgR2Zvw3I55S+zDaA1IVD5s9Fv9TD5W93AMvFolNAkA0Gs/beUpoU7Uj1vvNDmLsBlTnQaNjXHIr1peUFpL1x2nVm8G9Xb2zjSd0VOKaDhYo98AbmoJ37ct9Zv5aDUK1AkEAkNimXdU2XI9v5e+BDaXJA6svqlV50QxTSoV9n5eH0NaunUkSC+miKi/Vxbr++bh+uRmeFHGwie/HUl9/QftgzQJAJjXW15aSa89y+BGe56nkwgn0S+eUbmsKJs5R7D/KAlLHbBLPUJ2A4a8GnKmvY/o7FstAkiSLJaNiIXTOrzpJWw==";
+
+    String MODULE_CODE_FGW =    "A0001";
+}

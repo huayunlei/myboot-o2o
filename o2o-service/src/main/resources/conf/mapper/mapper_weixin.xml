@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihomefnt.o2o.intf.dao.weixin.FluxDao">
+
+    <!-- 根据活动ID查询活动详情 -->
+    <select id="queryActivityByPK" resultType="com.ihomefnt.o2o.intf.domain.weixin.dto.FluxActivity" parameterType="java.lang.Long">
+    	select idt_deal_activity as activityId,name,date_begin as beginTime,date_end as endTime,description from aijia_deal.t_deal_activity   	
+		WHERE idt_deal_activity=#{activityId}
+    </select>
+
+    <!-- 根据手机号码查询用户领取记录 -->
+    <select id="queryLogByConditon" resultType="java.lang.Integer" parameterType="map">
+        SELECT count(1) FROM aijia_deal.t_weixin_flux_user_log 
+        where 1=1
+		<if test="mobile != null ">  
+            <![CDATA[  
+              and mobile = #{mobile}  
+            ]]>
+		</if>        
+		<if test="unionId != null ">  
+            <![CDATA[  
+              and unionid = #{unionId}  
+            ]]>
+		</if>  
+    </select>
+     
+    <!-- 插入用户领取记录 -->
+     <insert id="acceptFlux" parameterType="com.ihomefnt.o2o.intf.domain.weixin.dto.FluxLogDto">
+		INSERT INTO aijia_deal.t_weixin_flux_user_log(fid_activity, mobile_type, mobile,unionid,create_time)
+		VALUES(#{activityId},#{mobileType},#{mobile},#{unionId},now())
+    </insert> 
+    
+     <!-- 插入微信token -->
+     <insert id="insertFLuxAccessToken" parameterType="com.ihomefnt.o2o.intf.domain.weixin.dto.FLuxAccessToken">
+		INSERT INTO aijia_deal.t_weixin_flux_token(accesstoken,create_time)
+		VALUES(#{accessToken},now())
+    </insert> 
+    
+    <!-- 获取最新token -->
+    <select id="getFLuxAccessToken" resultType="com.ihomefnt.o2o.intf.domain.weixin.dto.FLuxAccessToken" >
+         SELECT idt_weixin_flux_token accessId,accesstoken,create_time AS createTime FROM aijia_deal.t_weixin_flux_token 
+         ORDER BY createTime DESC LIMIT 0,1
+    </select> 
+    
+    <!-- 查询所有微信用户 -->
+   <resultMap id="userMap" type="com.ihomefnt.o2o.intf.domain.weixin.dto.FluxUser">
+        <id property="userId" column="idt_weixin_flux_user"/>
+        <result property="unionId" column="unionid"/>
+        <result property="openId" column="openid"/>
+        <result property="status" column="status"/>
+        <result property="nickName" column="nick_name"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>    
+    <select id="getFluxUserList" parameterType="map" resultMap="userMap">
+		SELECT idt_weixin_flux_user,unionid,openid,status,create_time,nick_name
+		FROM  aijia_deal.t_weixin_flux_user
+        where 1=1
+		<if test="status != null ">  
+            <![CDATA[  
+              and status = #{status}  
+            ]]>
+		</if>
+		<if test="unionId != null ">  
+            <![CDATA[  
+              and unionid = #{unionId}  
+            ]]>
+		</if>				
+    </select>
+    
+     <!-- 插入微信用户 -->
+    <insert id="insertFluxUserList" parameterType="java.util.List">   
+		INSERT INTO aijia_deal.t_weixin_flux_user(unionid, openid, status,create_time,nick_name)
+		VALUES
+        <foreach collection="list" item="item" index="index" separator="," >  
+            (#{item.unionId},#{item.openId},#{item.status},now(),#{item.nickName}) 
+        </foreach>  
+    </insert>   
+    
+    <!-- 修改微信用户 -->
+    <update id="UpdateFluxUser" parameterType="map">
+		update aijia_deal.t_weixin_flux_user set openid = #{openId},status = #{status},update_time=now() where unionid = #{unionId}
+    </update>            
+    
+</mapper>

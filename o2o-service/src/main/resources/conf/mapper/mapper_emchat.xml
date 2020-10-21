@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihomefnt.o2o.intf.dao.emchat.EmchatIMUsersDao">
+	
+	<insert id="saveEmchatIMUser" parameterType="com.ihomefnt.o2o.intf.domain.emchat.doo.EmchatIMUserInfoDo">
+    	insert into t_em_user(em_user_name, status_code, create_time 
+    		<if test="nickName != null" >
+		        , nick_name 
+		    </if>
+		    
+    		<if test="encryptedPassword != null" >
+		        , password 
+		    </if>
+		    
+		    <if test="activated != null" >
+		        , activated 
+		    </if>
+		     
+    		<if test="uuid != null" >
+		        , uuid 
+		    </if>
+		) 
+    	VALUES (#{userName}, #{statusCode}, NOW() 
+    	<if test="nickName != null" >
+			, #{nickName}  
+		</if>
+    	
+    	<if test="encryptedPassword != null" >
+			, #{encryptedPassword}  
+		</if>
+		    
+		<if test="activated != null" >
+			, #{activated}  
+		</if>	
+    	
+    	<if test="uuid != null" >
+		   , #{uuid}  
+		</if>
+    	)
+    </insert>
+    
+    
+    
+    <select id="queryEmchatIMUserPassword" parameterType="String" resultType="String">
+		SELECT password FROM t_em_user WHERE em_user_name = #{userId}
+    </select> 
+
+
+	<resultMap id="userInfoResultMap" type="com.ihomefnt.o2o.intf.domain.user.doo.UserDo">
+        <id property="uId" column="u_id"/>
+        <result property="name" column="name"/>
+    </resultMap>
+
+             
+    <select id="queryUserInfo" resultMap="userInfoResultMap">
+    	SELECT u_id, name, mobile   
+		FROM t_user tu 
+		WHERE tu.u_id NOT IN 
+		(SELECT em_user_name FROM t_em_user tem WHERE tem.status_code = 200)
+		LIMIT 20 
+    </select>
+    
+    
+    <update id="updateEmchatIMUserNickname" parameterType="map">
+    	UPDATE t_em_user set nick_name = #{nickName}
+		WHERE em_user_name = #{userName} 
+    </update>
+    
+</mapper>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihomefnt.o2o.intf.dao.ad.AdDao">
+
+	<resultMap id="adResultMap" type="com.ihomefnt.o2o.intf.domain.ad.dto.AdvertisementDto">
+		<id property="id" column="id" />
+		<result property="name" column="name" />
+		<result property="description" column="description" />
+		<result property="imgUrl" column="img_url" />
+		<result property="imgUrl2" column="img_url_2" />
+		<result property="rHttpUrl" column="r_http_url" />
+		<result property="logon" column="logon" />
+		<result property="status" column="status" />
+		<result property="type" column="type" />
+		<result property="position" column="position" />
+		<result property="fKey" column="f_key" />
+		<result property="isCity" column="is_city" />
+	</resultMap>
+	<select id="querAdById" resultMap="adResultMap" parameterType="java.lang.Long">
+	SELECT id,name,description,img_url,r_http_url,logon,status,type,position,f_key,is_city FROM t_ad_list WHERE 1=1 AND type=1 AND id=#{id}
+	</select>
+	
+	<select id="queryAdvertisement" resultMap="adResultMap" parameterType="map">
+	SELECT id,name,description,img_url,r_http_url,logon,status,type,position,f_key,is_city FROM t_ad_list WHERE 1=1 AND type=#{type} <if test="cityCode != null"> and city_code=#{cityCode} </if> and  status=1 and position=#{position} ORDER BY sort ASC LIMIT 0,#{count}
+	</select>
+	
+	<select id="queryAdvertisementnew" resultMap="adResultMap" parameterType="map">
+	SELECT
+	id,name,description,img_url,r_http_url,logon,status,type,position,f_key,is_city
+	FROM t_ad_list WHERE status=1 
+	and version >= 200
+	<if test="cityCode != null"> 
+	and city_code=#{cityCode} 
+	</if>
+	<if test="position != null"> 
+	and position=#{position} 
+	</if>
+	<if test="type != null"> 
+	and type=#{type} 
+	</if>
+	<if test="appVersion != null"> 
+	and version &lt;=#{appVersion} 
+	</if>
+	<if test="width != null"> 
+	and width=#{width} 
+	</if>
+	ORDER BY sort ASC
+	</select>
+	
+	<select id="queryAdvertisement1" resultMap="adResultMap" parameterType="map">
+	SELECT
+	id,name,description,img_url,r_http_url,logon,status,type,position,f_key,is_city
+	FROM t_ad_list WHERE status=1 
+	<if test="cityCode != null"> 
+	and city_code=#{cityCode} 
+	</if>
+	<if test="position != null"> 
+	and position=#{position} 
+	</if>
+	<if test="type != null"> 
+	and type =#{type} 
+	</if>
+	<if test="appVersion != null"> 
+	and version &lt;=#{appVersion} 
+	</if>
+	<if test="width != null"> 
+	and width=#{width} 
+	</if>
+	ORDER BY sort ASC
+	</select>
+	
+	<select id="queryAdvertisement295" resultMap="adResultMap" parameterType="map">
+		SELECT
+		id,name,description,img_url,r_http_url,logon,status,type,position,f_key,is_city
+		FROM t_ad_list WHERE status=1 
+		<if test="cityCode != null"> 
+		and city_code=#{cityCode} 
+		</if>
+		<if test="position != null"> 
+		and position=#{position} 
+		</if>
+		<if test="type != null"> 
+		and type =#{type} 
+		</if>
+		<if test="appVersion != null"> 
+		and version &gt;=#{appVersion} 
+		</if>
+		<if test="width != null"> 
+		and width=#{width} 
+		</if>
+		ORDER BY sort ASC
+	</select>
+	
+	<select id="queryAdFromProtocol" resultMap="adResultMap" parameterType="map">
+	SELECT
+	id,name,description,img_url,r_http_url,logon,status,type,position,f_key,is_city
+	FROM t_ad_list WHERE 1=1 AND type=1 AND status=1 AND VERSION=200 AND
+	width=750 AND city_code=#{cityCode} AND LOWER(r_http_url) LIKE #{protocol} ORDER BY sort ASC
+	LIMIT 0,#{count}
+	</select>
+	
+</mapper>

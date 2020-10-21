@@ -1,0 +1,475 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihomefnt.o2o.intf.dao.experiencestore.ExperienceStoreDao">
+	
+	<resultMap id="storeResResultMap" type="com.ihomefnt.o2o.intf.domain.experiencestore.vo.response.HttpExperienceStoreResponse">
+		<id property="esId" column="id" />
+		<result property="communityName" column="name" />
+		<result property="image" column="images" />
+		<result property="businessHours" column="business_hours" />
+		<result property="distance" column="distance" />
+		<result property="expAddress" column="location" />
+		<result property="suitSale" column="suit_sale" />
+		<result property="suitCount" column="suit_count" />
+		<result property="houseCount" column="house_count" />
+	</resultMap>
+	<resultMap id="detailResultMap" type="com.ihomefnt.o2o.intf.domain.experiencestore.vo.response.HttpExperienceStoreDetailResponse">
+		<id property="esId" column="id" />
+		<result property="image" column="images" />
+		<result property="owner" column="owner" />
+		<result property="communityName" column="name" />
+		<result property="workDate" column="work_date" />
+		<result property="businessHours" column="business_hours" />
+		<result property="latitude" column="latitude" />
+		<result property="longitude" column="longitude" />
+		<result property="experienceAddress" column="location" />
+		<result property="hQPhone" column="hq_phone" />
+		<result property="shopManagerPhone" column="sm_phone" />
+		<result property="buildingId" column="id_building" />
+		<result property="name" column="name" />
+		<result property="suitStatus" column="status"/>
+		<result property="communityDesc" column="description"/>
+		<result property="isOfflineExp" column="off_line_experience"/>
+	</resultMap>
+	<resultMap id="houseDetailResultMap" type="com.ihomefnt.o2o.intf.domain.house.dto.House">
+		<id property="idtHouse" column="idt_house" />
+		<result property="name" column="name" />
+		<result property="houseStr" column="houseStr" />
+		<result property="size" column="size" />
+		<result property="houseImg" column="normal_pic" />
+	</resultMap>
+	<resultMap id="suitDetailResultMap" type="com.ihomefnt.o2o.intf.domain.product.vo.response.Suit">
+		<id property="suitId" column="idt_suit" />
+		<result property="suitName" column="name" />
+		<result property="imagesUrl" column="images" />
+		<result property="suitPrice" column="price" />
+		<result property="productCount" column="productCount" />
+		<result property="offLine" column="off_line_experience" />
+		<result property="url3d" column="panorama_3d_url" />
+	</resultMap>
+	<select id="getExperStoresFromPlace" resultMap="storeResResultMap" parameterType="map">
+<!-- SELECT id,NAME,business_hours,images,ROUND(6378.138*2*ASIN(SQRT(POW(SIN( (#{latitude}*PI()/180-latitude*PI()/180)/2),2)+COS(#{latitude}*PI()/180)*COS(latitude*PI()/180)* POW(SIN( (#{longitude}*PI()/180-longitude*PI()/180)/2),2)))*1000) AS distance FROM t_exper_store -->
+<!-- ORDER BY distance ASC,create_time DESC LIMIT 0,30 -->
+SELECT
+  id,ebs.name,business_hours,images,ROUND(6378.138*2*ASIN(SQRT(POW(SIN( (#{latitude}*PI()/180-latitude*PI()/180)/2),2)+COS(#{latitude}*PI()/180)*COS(latitude*PI()/180)* POW(SIN( (#{longitude}*PI()/180-longitude*PI()/180)/2),2)))*1000) AS distance
+FROM
+  (SELECT 
+    es.id,
+    NAME,
+    OWNER,
+    work_date,
+    business_hours,
+    hq_phone,
+    sm_phone,
+    images,
+    STATUS,
+    bs.id_building 
+  FROM
+    t_exper_store es 
+    INNER JOIN r_building_store bs 
+      ON es.id = bs.id_store
+      ) ebs 
+  INNER JOIN t_building tb 
+    ON ebs.id_building = tb.idt_building 
+    WHERE STATUS =1 
+	<if test="cityCode != null">
+		AND (tb.fid_district IN (SELECT idt_areas FROM t_areas WHERE zipcode=#{cityCode}) 
+		<if test="cityCode == '210000'">
+			OR tb.idt_building=3
+		</if>
+		)
+	</if>    
+    ORDER BY distance ASC,create_time DESC LIMIT 0,30
+	</select>
+	<select id="getExperStores" resultMap="storeResResultMap" parameterType="map">
+SELECT
+  id,ebs.name,business_hours,images,'' AS distance
+FROM
+  (SELECT 
+    es.id,
+    NAME,
+    OWNER,
+    work_date,
+    business_hours,
+    hq_phone,
+    sm_phone,
+    images,
+    STATUS,
+    bs.id_building 
+  FROM
+    t_exper_store es 
+    INNER JOIN r_building_store bs 
+      ON es.id = bs.id_store
+      ) ebs 
+  INNER JOIN t_building tb 
+    ON ebs.id_building = tb.idt_building 
+    WHERE STATUS =1 
+	<if test="cityCode != null">
+		AND (tb.fid_district IN (SELECT idt_areas FROM t_areas WHERE zipcode=#{cityCode}) 
+		<if test="cityCode == '210000'">
+			OR tb.idt_building=3
+		</if>
+		)
+	</if>      
+    ORDER BY distance ASC,create_time DESC LIMIT 0,30
+	</select>
+	
+	<select id="getDSDetail" resultMap="detailResultMap" parameterType="java.lang.Long">
+SELECT
+  ebs.id,  
+  ebs.NAME,
+  OWNER,
+  work_date,
+  business_hours,
+  hq_phone,
+  sm_phone,
+  images,
+  STATUS,
+  tb.latitude,
+  tb.longitude,
+  tb.location,
+  id_building 
+FROM
+  (SELECT 
+    es.id,
+    NAME,
+    OWNER,
+    work_date,
+    business_hours,
+    hq_phone,
+    sm_phone,
+    images,
+    STATUS,
+    bs.id_building 
+  FROM
+    t_exper_store es 
+    INNER JOIN r_building_store bs 
+      ON es.id = bs.id_store
+      WHERE es.id=#{dsId}
+      ) ebs 
+  INNER JOIN t_building tb 
+    ON ebs.id_building = tb.idt_building 
+	</select>
+
+	<select id="getDSDetailById" resultMap="detailResultMap" parameterType="java.lang.Long">
+		SELECT
+			tes.name,
+			tes.images image,
+			ts.fid_style id_building
+		FROM 
+			t_exper_store tes,
+			r_building_store rbs,
+			r_building_house rbh,
+			r_house_suit rhs,
+			t_suit ts
+		WHERE tes.id=#{esId}
+			AND tes.id = rbs.id_store
+			AND rbs.id_building=rbh.fid_building
+			AND rbh.fid_house=rhs.fid_house
+			AND rhs.fid_suit=ts.idt_suit
+			ORDER BY ts.fid_style ASC 
+	</select>
+	
+	<select id="getExperStores200" resultMap="storeResResultMap" parameterType="map">
+      SELECT tes.id,tes.name,tes.business_hours,tes.images,CONCAT(ta.area_name,tb.location) location FROM t_exper_store tes 
+        INNER JOIN r_building_store rbs ON tes.id = rbs.id_store 
+        INNER JOIN t_building tb ON rbs.id_building = tb.idt_building 
+        INNER JOIN t_areas ta on tb.fid_district = ta.idt_areas
+      WHERE tes.status =1
+	  <if test="cityCode != null">
+		AND (tb.fid_district IN (SELECT idt_areas FROM t_areas WHERE zipcode=#{cityCode}) )
+	  </if>
+      ORDER BY tes.create_time DESC
+	</select>
+	
+	<select id="getMostSuitList" resultMap="storeResResultMap" parameterType="map">
+      SELECT tes.id,count(tes.id) suit_count FROM t_exper_store tes 
+        INNER JOIN r_building_store rbs ON tes.id = rbs.id_store 
+        INNER JOIN t_building tb ON rbs.id_building = tb.idt_building 
+        left join r_building_house rbh on tb.idt_building = rbh.fid_building
+        left join r_house_suit rhs on rbh.fid_house = rhs.fid_house
+        left join t_suit ts on rhs.fid_suit = ts.idt_suit
+      WHERE tes.status =1 and ts.status =1
+	  <if test="cityCode != null">
+		AND (tb.fid_district IN (SELECT idt_areas FROM t_areas WHERE zipcode=#{cityCode}) )
+	  </if>
+	  group by tes.id
+      ORDER BY suit_count DESC,tes.create_time DESC 
+	</select>
+	
+	<select id="getMostSaleList" resultMap="storeResResultMap" parameterType="map">
+      SELECT tes.id,sum(COALESCE(ts.sale_count,0)) suit_sale FROM t_exper_store tes 
+        INNER JOIN r_building_store rbs ON tes.id = rbs.id_store 
+        INNER JOIN t_building tb ON rbs.id_building = tb.idt_building 
+        left join r_building_house rbh on tb.idt_building = rbh.fid_building
+        left join r_house_suit rhs on rbh.fid_house = rhs.fid_house
+        left join t_suit ts on rhs.fid_suit = ts.idt_suit
+      WHERE tes.status =1 and ts.status =1
+	  <if test="cityCode != null">
+		AND (tb.fid_district IN (SELECT idt_areas FROM t_areas WHERE zipcode=#{cityCode}) )
+	  </if>
+	  group by tes.id
+      ORDER BY suit_sale DESC,tes.create_time DESC 
+	</select>
+	
+	<select id="getHouseCount" resultType="java.lang.Integer" parameterType="map">
+      SELECT count(tes.id) house_count FROM t_exper_store tes 
+        INNER JOIN r_building_store rbs ON tes.id = rbs.id_store 
+        INNER JOIN t_building tb ON rbs.id_building = tb.idt_building 
+        left join r_building_house rbh on tb.idt_building = rbh.fid_building
+        left join r_house_suit rhs on rbh.fid_house = rhs.fid_house
+        left join t_suit ts on rhs.fid_suit = ts.idt_suit
+      WHERE tes.status =1 and ts.status =1 and ts.off_line_experience = 1
+	    and tes.id =#{esId}
+	</select>
+	
+	<select id="getExperStoresFromPlace200" resultMap="storeResResultMap" parameterType="map">
+      SELECT tes.id,tes.name,tes.business_hours,tes.images,CONCAT(ta.area_name,tb.location) location, 
+      ROUND(6378.138*2*ASIN(SQRT(POW(SIN( (#{latitude}*PI()/180-latitude*PI()/180)/2),2)+COS(#{latitude}*PI()/180)*COS(latitude*PI()/180)* POW(SIN( (#{longitude}*PI()/180-longitude*PI()/180)/2),2)))*1000) AS distance
+      FROM t_exper_store tes 
+        INNER JOIN r_building_store rbs ON tes.id = rbs.id_store 
+        INNER JOIN t_building tb ON rbs.id_building = tb.idt_building 
+        INNER JOIN t_areas ta on tb.fid_district = ta.idt_areas
+      WHERE tes.status =1
+	  <if test="cityCode != null">
+		AND (tb.fid_district IN (SELECT idt_areas FROM t_areas WHERE zipcode=#{cityCode}))
+	  </if>    
+      ORDER BY distance ASC,tes.create_time DESC 
+	</select>
+	<select id="getExperStoresCount" resultType="java.lang.Integer" parameterType="map">
+      SELECT count(1) FROM t_exper_store tes 
+        INNER JOIN r_building_store rbs ON tes.id = rbs.id_store 
+        INNER JOIN t_building tb ON rbs.id_building = tb.idt_building 
+      WHERE tes.status =1
+	  <if test="cityCode != null">
+		AND (tb.fid_district IN (SELECT idt_areas FROM t_areas WHERE zipcode=#{cityCode}) )
+	  </if>      
+	</select>
+	
+	<select id="getDSDetail200" resultMap="detailResultMap" parameterType="java.lang.Long">
+		  SELECT DISTINCT
+		tes.id,
+		tes. NAME,
+		tes. OWNER,
+		tes.description,
+	  ts.off_line_experience,
+	  ts.`status`,
+		tes.work_date,
+		tes.business_hours,
+		tes.hq_phone,
+		tes.sm_phone,
+		tes.images,
+		tb.latitude,
+		tb.longitude,
+		CONCAT(ta.area_name, tb.location) location,
+		id_building
+	FROM
+		t_exper_store tes
+	LEFT JOIN r_building_store rbs ON tes.id = rbs.id_store
+	LEFT JOIN r_building_house rbh ON rbs.id_building = rbh.fid_building
+	LEFT JOIN t_house th ON rbh.fid_house = th.idt_house
+	LEFT JOIN r_house_suit rhs ON th.idt_house = rhs.fid_house
+	LEFT JOIN t_suit ts ON rhs.fid_suit = ts.idt_suit and ts.`status` = 1
+	LEFT JOIN t_building tb ON rbs.id_building = tb.idt_building
+	LEFT JOIN t_areas ta ON tb.fid_district = ta.idt_areas 
+	WHERE tes.id=#{dsId} and tes.`status` = 1 ORDER BY ts.off_line_experience desc  limit 1
+	</select>
+	
+	<select id="queryHouseByBuildingId" resultMap="houseDetailResultMap" parameterType="java.lang.Long">
+		SELECT CONCAT(
+			CASE WHEN th.room > 0 THEN th.room ELSE '' END,
+			CASE WHEN th.room > 0 THEN '房' ELSE ''  END,	
+			CASE WHEN th.living > 0 THEN th.living ELSE '' END,
+			CASE WHEN th.living > 0 THEN '厅' ELSE ''  END,		
+			CASE WHEN th.toilet > 0 THEN th.toilet ELSE '' END,
+			CASE WHEN th.toilet > 0 THEN '卫' ELSE ''  END
+			) houseStr,
+			th.idt_house,
+			th.name,
+			th.normal_pic,
+			th.size 
+		FROM r_building_house rbh
+	        left join t_house th on rbh.fid_house = th.idt_house
+		WHERE rbh.fid_building=#{buildingId}
+	</select>
+	
+	<select id="querySuitByHouseId" resultMap="suitDetailResultMap" parameterType="java.lang.Long">
+		SELECT ts.idt_suit,ts.name,ts.price,ts.images,ts.off_line_experience,
+		  ts.panorama_3d_url,sum(product_count) productCount
+        FROM r_house_suit rhs
+          left join t_suit ts on rhs.fid_suit = ts.idt_suit
+          left join r_suit_room rsr on ts.idt_suit = rsr.fid_suit
+          left join r_room_product rrp on rsr.fid_room = rrp.fid_room
+        WHERE rhs.fid_house=#{houseId} and ts.status = 1
+          group by idt_suit
+	</select>
+	
+	
+	
+	<resultMap id="expStoreSummaryResultMap" type="com.ihomefnt.o2o.intf.domain.experiencestore.vo.response.HttpExperienceStoreResponse">
+	    <id property="esId" column="exp_id"/>
+		<result property="communityName" column="exp_name"/>
+		<result property="image" column="exp_images"/>
+		<result property="expAddress" column="location"/>
+		<result property="dist" column="distance"/>
+		<collection property="houseSummaryList" resultMap="houseSummaryResultMap"></collection>
+	</resultMap>
+	<resultMap id="houseSummaryResultMap" type="com.ihomefnt.o2o.intf.domain.experiencestore.vo.response.HouseSummary" >
+		<id property="houseId" column="idt_house"/>
+		<result property="houseName" column="house_name"/>
+		<collection property="suitSummaryList" resultMap="suitSummaryResultMap"></collection>
+	</resultMap>
+	<resultMap id="suitSummaryResultMap" type="com.ihomefnt.o2o.intf.domain.experiencestore.vo.response.SuitSummary">
+		<id property="suitId" column="idt_suit"/>
+		<result property="suitName" column="suit_name"/>
+		<result property="offlineExperience" column="off_line_experience"/>
+		<result property="panorama3dUrl" column="panorama_3d_url"/>
+	</resultMap>
+	<!-- 获取体验店活动 -->
+	<resultMap id="expActivityResultMap" type="com.ihomefnt.o2o.intf.domain.experiencestore.vo.response.ActivityLabel">
+		<result property="title" column="acvscs"/>
+		<result property="desc" column="description"/>
+		<result property="h5Url" column="address"/>
+		<result property="h5ActivityContent" column="activity_content"/>
+		<result property="experStoreId" column="fid_exper_store"/>
+	</resultMap>
+	<select id="queryExperienceStoreActivity" parameterType="java.lang.Long" resultMap="expActivityResultMap">
+	SELECT
+		acvscs,
+		address,
+		description,
+		fid_exper_store,
+		activity_content
+	FROM
+		t_exper_store_activity
+	WHERE
+		fid_exper_store = #{dsId}
+		and acvscs != '' LIMIT 2
+	</select>
+	
+	<!-- 查询离线上体验店最近的线下体验店地址和距离 -->
+	<resultMap id="nearestAddressResultMap" type="com.ihomefnt.o2o.intf.domain.experiencestore.vo.response.HttpExperienceStoreDetailResponse">
+		<id property="esId" column="id" />
+		<result property="expAddress" column="location"/>
+		<result property="expName" column="name"/>
+		<result property="expDistance" column="distance"/>
+		<result property="latitude" column="latitude"/>
+		<result property="longitude" column="longitude"/>
+	</resultMap>
+	<select id="queryNearestAddress" parameterType="map" resultMap="nearestAddressResultMap">
+	    SELECT DISTINCT
+			tes.id,
+			tes.name,
+			tb.latitude,
+     		tb.longitude,
+			CONCAT(ta.area_name, tb.location) location,
+			ROUND(6378.138*2*ASIN(SQRT(POW(SIN( (#{latitude}*PI()/180-latitude*PI()/180)/2),2)+COS(#{latitude}*PI()/180)*COS(latitude*PI()/180)* POW(SIN( (#{longitude}*PI()/180-longitude*PI()/180)/2),2)))*1000) AS distance
+		FROM
+		t_exper_store tes
+	LEFT JOIN r_building_store rbs ON tes.id = rbs.id_store
+	LEFT JOIN r_building_house rbh ON rbs.id_building = rbh.fid_building
+	LEFT JOIN t_house th ON rbh.fid_house = th.idt_house
+	LEFT JOIN r_house_suit rhs ON th.idt_house = rhs.fid_house
+	LEFT JOIN t_suit ts ON rhs.fid_suit = ts.idt_suit and ts.`status` = 1
+	LEFT JOIN t_building tb ON rbs.id_building = tb.idt_building
+	LEFT JOIN t_areas ta ON tb.fid_district = ta.idt_areas 
+	WHERE tes.`status` = 1 and ts.off_line_experience=1 ORDER BY distance LIMIT 1
+		
+	</select>
+	
+	<select id="queryExperStoresFromPlace260" resultMap="expStoreSummaryResultMap" parameterType="map">
+		<!-- SELECT tes.id AS exp_id, tes.name AS exp_name, tes.images AS exp_images, 
+			CONCAT(ta.area_name, tb.location) location, 
+      ROUND(6378.138*2*ASIN(SQRT(POW(SIN( (#{latitude}*PI()/180-latitude*PI()/180)/2),2)+COS(#{latitude}*PI()/180)*COS(latitude*PI()/180)* POW(SIN( (#{longitude}*PI()/180-longitude*PI()/180)/2),2)))*1000) AS distance,
+      th.idt_house, th.name AS house_name, ts.idt_suit, ts.name AS suit_name, ts.off_line_experience, ts.panorama_3d_url 
+      FROM t_exper_store tes, t_building tb, r_building_store rbs, t_areas ta, 
+			r_building_house rbh, t_house th, r_house_suit rhs,	t_suit ts
+	      WHERE tes.status = 1 AND ts.status = 1  AND ta.zipcode = #{cityCode} 
+			AND tb.fid_district = ta.idt_areas 
+			AND tes.id = rbs.id_store AND rbs.id_building = tb.idt_building       
+			AND tb.idt_building = rbh.fid_building AND th.idt_house = rbh.fid_house 
+			AND th.idt_house = rhs.fid_house AND ts.idt_suit = rhs.fid_suit  -->
+			
+			SELECT a.*,  ts.idt_suit, ts.name AS suit_name, ts.off_line_experience, ts.panorama_3d_url
+			FROM 
+			(SELECT tes.id AS exp_id, tes.name AS exp_name, tes.images AS exp_images, 
+						CONCAT(ta.area_name, tb.location) location, 
+			      ROUND(6378.138*2*ASIN(SQRT(POW(SIN( (#{latitude}*PI()/180-latitude*PI()/180)/2),2)+COS(#{latitude}*PI()/180)*COS(latitude*PI()/180)* POW(SIN( (#{longitude}*PI()/180-longitude*PI()/180)/2),2)))*1000) AS distance,
+			      th.idt_house, th.name AS house_name  
+			      FROM t_exper_store tes, t_building tb, r_building_store rbs, t_areas ta, 
+						r_building_house rbh, t_house th 
+				    WHERE tes.status = 1  AND ta.zipcode in 
+				   	(
+					select DISTINCT zipcode from t_areas where parent_id in (
+					select idt_areas from t_areas where parent_id = 
+					(select parent_id from t_areas where idt_areas = (select parent_id from t_areas where zipcode = #{cityCode} LIMIT 1)))
+					)
+				    	<if test="searchItem != null" >
+							AND tes.name LIKE CONCAT('%',#{searchItem},'%') 
+						</if>
+						AND tb.fid_district = ta.idt_areas 
+						AND tes.id = rbs.id_store AND rbs.id_building = tb.idt_building       
+						AND tb.idt_building = rbh.fid_building AND th.idt_house = rbh.fid_house 		
+			) a 
+			LEFT JOIN r_house_suit rhs ON a.idt_house = rhs.fid_house 
+			LEFT JOIN t_suit ts ON ts.idt_suit = rhs.fid_suit AND ts.status = 1 
+	</select>
+	
+	<select id="queryExperStores260" resultMap="expStoreSummaryResultMap" parameterType="map">
+		<!-- SELECT tes.id AS exp_id, tes.name AS exp_name, tes.images AS exp_images, 
+			CONCAT(ta.area_name, tb.location) location, 
+      		0 AS distance,
+     		th.idt_house, th.name AS house_name, ts.idt_suit, ts.name AS suit_name, ts.off_line_experience, ts.panorama_3d_url 
+      FROM t_exper_store tes, t_building tb, r_building_store rbs, t_areas ta, 
+			r_building_house rbh, t_house th, r_house_suit rhs,	t_suit ts 
+	      WHERE tes.status = 1 AND ts.status = 1  AND ta.zipcode = #{cityCode} 
+			AND tb.fid_district = ta.idt_areas 
+			AND tes.id = rbs.id_store AND rbs.id_building = tb.idt_building       
+			AND tb.idt_building = rbh.fid_building AND th.idt_house = rbh.fid_house 
+			AND th.idt_house = rhs.fid_house AND ts.idt_suit = rhs.fid_suit  -->
+			
+		SELECT a.*,  ts.idt_suit, ts.name AS suit_name, ts.off_line_experience, ts.panorama_3d_url
+		FROM 
+		(SELECT tes.id AS exp_id, tes.name AS exp_name, tes.images AS exp_images, 
+					CONCAT(ta.area_name, tb.location) location, 
+		      		0 AS distance,
+		     		th.idt_house, th.name AS house_name  
+		      FROM t_exper_store tes, t_building tb, r_building_store rbs, t_areas ta, 
+					r_building_house rbh, t_house th 	
+			    WHERE tes.status = 1 AND ta.zipcode in 
+				   	(
+					select DISTINCT zipcode from t_areas where parent_id in (
+					select idt_areas from t_areas where parent_id = 
+					(select parent_id from t_areas where idt_areas = (select parent_id from t_areas where zipcode = #{cityCode} LIMIT 1)))
+					)
+			    	<if test="searchItem != null" >
+						AND tes.name LIKE CONCAT('%',#{searchItem},'%') 
+					</if>
+					AND tb.fid_district = ta.idt_areas 
+					AND tes.id = rbs.id_store AND rbs.id_building = tb.idt_building       
+					AND tb.idt_building = rbh.fid_building AND th.idt_house = rbh.fid_house 
+					 
+		) a 
+		LEFT JOIN r_house_suit rhs ON a.idt_house = rhs.fid_house
+		LEFT JOIN t_suit ts ON ts.idt_suit = rhs.fid_suit AND ts.status = 1 
+	</select>
+	
+	
+	<resultMap id="expStoreActivityResultMap" type="com.ihomefnt.o2o.intf.domain.experiencestore.vo.response.ActivityLabel">
+	    <id property="experStoreActivityId" column="idt_store_activity"/>
+		<result property="title" column="acvscs"/>
+		<result property="desc" column="description"/>
+		<result property="h5Url" column="address"/>
+		<result property="h5ActivityContent" column="activity_content"/>
+		<result property="experStoreId" column="fid_exper_store"/>
+	</resultMap>
+	
+	<select id="queryExperStoresActivity" resultMap="expStoreActivityResultMap" >
+		SELECT idt_store_activity, acvscs, address, description, fid_exper_store ,activity_content
+		FROM t_exper_store_activity WHERE acvscs != ''
+	</select>
+	
+</mapper>

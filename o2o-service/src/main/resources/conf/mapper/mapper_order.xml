@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ihomefnt.o2o.intf.dao.order.OrderDao">
+	<resultMap id="torderResultMap" type="com.ihomefnt.o2o.intf.domain.order.dto.TOrder">
+		<id property="orderId" column="order_id" />
+		<result property="purchaserName" column="purchaser_name" />
+		<result property="purchaserTel" column="purchaser_tel" />
+		<result property="orderPrice" column="order_price" />
+		<result property="orderProductAmount" column="order_product_amount" />
+		<result property="orderStatus" column="order_status" />
+		<result property="createTime" column="create_time" />
+		<result property="updateTime" column="update_time" />
+		<result property="userId" column="userId" />
+		<result property="deliveryAddress" column="delivery_address" />
+		<result property="invoiceInformation" column="invoice_information" />
+		<result property="productId" column="product_id" />
+		<result property="productName" column="product_name" />
+		<result property="productType" column="product_type" />
+		<result property="orderSource" column="order_source" />
+		<result property="orderNum" column="order_num" />
+		<result property="pictureUrlOriginal" column="picture_url_original" />
+		<result property="contactTime" column="contact_time" />
+		<result property="couponPay" column="coupon_pay" />
+		<result property="voucherId" column="fid_voucher_detail" />
+        <result property="parValue" column="voucher_pay" />
+	</resultMap>
+	<resultMap id="orderResultMap" type="com.ihomefnt.o2o.intf.domain.product.doo.UserOrder">
+		<result property="orderId" column="order_id" />
+		<result property="name" column="product_id" />
+		<result property="pictureUrlOriginal" column="images" />
+		<result property="orderStatus" column="order_status" />
+		<result property="createTime" column="create_time" />
+		<result property="productCount" column="productAmount" />
+		<result property="orderPrice" column="orderPrice" />
+		<result property="purchaserTel" column="purchaser_tel" />
+		<result property="purchaserName" column="purchaser_Name" />
+		<result property="deliveryAddress" column="delivery_address" />
+		<result property="orderNum" column="order_num" />
+		<result property="userId" column="userId" />
+		<result property="receiptName" column="receipt_name" />
+        <result property="receiptTel" column="receipt_tel" />
+		<result property="deliveryTime" column="delivery_time" />
+	    <result property="actCode" column="act_code"/>
+        <result property="payDeadLine" column="pay_dead_line"/>
+        <result property="couponPay" column="coupon_pay" />
+		<result property="voucherId" column="fid_voucher_detail" />
+		<result property="voucherPay" column="voucher_pay" />
+	</resultMap>
+	
+	<resultMap id="orderPayRecordResultMap"
+		type="com.ihomefnt.o2o.intf.domain.order.dto.OrderPayRecord">
+		<result property="rId" column="id" />
+		<result property="orderId" column="order_id" />
+		<result property="payType" column="pay_type" />
+		<result property="payNum" column="pay_num" />
+		<result property="payMoney" column="pay_money" />
+		<result property="payType" column="pay_type" />
+		<result property="createTimeDate" column="create_time" />
+		<result property="updateTime" column="update_time" />
+		<result property="subOrderNum" column="sub_order_num" />
+		<result property="subOrderStatus" column="sub_order_status" />
+	</resultMap>
+	
+	<resultMap id="orderDetailResultMap"
+		type="com.ihomefnt.o2o.intf.domain.product.doo.ProductOrderDetail">
+		<result property="productId" column="idt_product" />
+		<result property="name" column="name" />
+		<result property="pictureUrls" column="images" />
+		<result property="productPrice" column="product_price" />
+		<result property="productCount" column="product_amount" />
+		<result property="deliveryTime" column="delivery_time" />
+	</resultMap>
+	
+	<resultMap id="consigneeResultMap"
+		type="com.ihomefnt.o2o.intf.domain.order.dto.Consignee">
+		<result property="purchaserName" column="purchaser_name" />
+		<result property="purchaserTel" column="purchaser_tel" />
+	</resultMap>
+
+    <resultMap id="orderSerialNoMap"
+               type="com.ihomefnt.o2o.intf.domain.order.dto.OrderSerialNo">
+        <result property="orderDay" column="curday" />
+        <result property="serialNo" column="sn" />
+    </resultMap>
+    
+	<resultMap id="discountResultMap" type="com.ihomefnt.o2o.intf.domain.order.vo.response.HttpDiscountResponse">
+		<id property="suitId" column="idt_suit" />
+		<result property="suitDiscount" column="deal" />
+		<result property="roomDiscount" column="room_discount" />
+	</resultMap>
+	
+	<select id="queryAllSingleUserOrder" parameterType="map"
+		resultMap="orderResultMap">
+		select act_code,pay_dead_line,order_id,order_status,o.create_time as create_time,p.images as
+		images,p.name as name,order_price AS orderPrice,order_product_amount
+		AS productAmount
+		from t_order as o inner join t_product as p on
+		o.product_id=p.idt_product where o.product_type=0 and o.userId =
+		#{userId}
+	</select>
+	<select id="queryUserOrderByOrderId" parameterType="java.lang.Long"
+		resultMap="orderResultMap">
+		select act_code,pay_dead_line,order_id,order_status,o.create_time as create_time,order_price AS
+		orderPrice,order_product_amount AS
+		productAmount,purchaser_tel,purchaser_name,delivery_address,order_num,userId,receipt_name,receipt_tel,coupon_pay,fid_voucher_detail,voucher_pay
+		from t_order as o where o.order_id =
+		#{orderId}
+	</select>
+	<select id="queryOrderDetailsByOrderId" parameterType="java.lang.Long"
+		resultMap="orderDetailResultMap">
+		SELECT idt_product,NAME,images,product_price,product_amount,DATE_FORMAT(t.expected_delivery_time,'%Y-%m-%d %H:%i:%s') delivery_time FROM t_order_details as o INNER JOIN t_product
+		as p ON o.product_id=p.idt_product,t_order t WHERE o.order_id = #{orderId} AND o.order_id=t.order_id
+	</select>
+
+
+	<select id="queryAllCompositeUserOrder" parameterType="map"
+		resultMap="orderResultMap">
+		select act_code,pay_dead_line,order_id,order_status,o.create_time as create_time,p.images as
+		images,p.name as name,order_price AS orderPrice,order_product_amount
+		AS productAmount
+		from t_order as o inner join t_suit as p on
+		o.product_id=p.idt_suit where o.product_type != 0 and o.userId =
+		#{userId}
+	</select>
+
+	<update id="updateOrder" parameterType="com.ihomefnt.o2o.intf.domain.product.doo.UserOrder">
+		UPDATE t_order set order_status = #{orderStatus}
+		<if test="reasonId != null and '' != reasonId">  
+             , reason_id = #{reasonId}
+		</if>
+		<where>
+			1=1
+			<if test="orderId != null and '' != orderId">  
+              and order_id = #{orderId}  
+			</if>
+		</where>
+	</update>
+
+	<select id="queryOrderByOrderId" parameterType="java.lang.Long"
+		resultMap="torderResultMap">
+		select
+		act_code, pay_dead_line,order_id,purchaser_name,purchaser_tel,order_price,order_product_amount,
+		order_status,userId,delivery_address,invoice_information,product_id,product_type,
+		product_name,order_num,create_time
+		from t_order
+		where order_id = #{orderId}
+		and order_status in (4,6)
+	</select>
+	<select id="queryMyOrderByOrderId" parameterType="java.lang.Long"
+		resultMap="torderResultMap">
+		select act_code,pay_dead_line,
+		order_id,purchaser_name,purchaser_tel,order_price,order_product_amount,
+		order_status,userId,delivery_address,invoice_information,product_id,product_type,
+		product_name,order_num,create_time,contact_time,coupon_pay,fid_voucher_detail,voucher_pay
+		from t_order
+		where order_id = #{orderId}
+	</select>
+	<select id="queryUserOrder" parameterType="map" resultMap="orderResultMap">
+		SELECT * FROM (SELECT act_code,pay_dead_line,order_id,order_status,o.create_time AS
+		create_time,picture_url_original AS images,product_name AS
+		NAME,order_price AS orderPrice,order_product_amount AS productAmount,DATE_FORMAT(expected_delivery_time,'%Y-%m-%d %H:%i:%s') delivery_time
+		FROM t_order o WHERE 1=1 and o.order_status != -1
+		<if test="userId != null and '' != userId">  
+              and o.userId=#{userId}  
+		</if>
+		<if test="orderId != null and '' != orderId">  
+            <![CDATA[  
+               AND order_id < #{orderId}
+            ]]>
+		</if>
+		) t  ORDER BY create_time DESC LIMIT 0,#{count};
+	</select>
+	
+	<select id="queryMyConsignee" parameterType="java.lang.Long" resultMap="consigneeResultMap">
+		SELECT  purchaser_name,purchaser_tel FROM t_order WHERE userId = #{userId} ORDER BY create_time DESC LIMIT 0,3
+	</select>
+
+    <insert id="generateOrderSerial" parameterType="map">
+        INSERT INTO t_serial(cdate,oid) VALUES (curdate(),#{orderId});
+    </insert>
+
+    <select id="getOrderSerial" parameterType="map" resultMap="orderSerialNoMap">
+        select sn, DATE_FORMAT(cdate,'%Y%m%d')+0 as curday from t_serial where oid = #{orderId};
+    </select>
+
+    <update id="updateOrderNumber" parameterType="map">
+        UPDATE t_order set order_num = #{orderNum} where order_id = #{orderId};
+    </update>
+
+    <select id="selPayedMoneyByOrderId" parameterType="java.lang.Long" resultType="java.lang.Double">
+        SELECT SUM(pay_money) moneys FROM t_order_pay WHERE order_id = #{orderId};
+    </select> 
+    
+    <select id="selPayedMoneyByOrderIdAndOrderStatus" parameterType="map" resultType="java.lang.Double">
+        SELECT SUM(pay_money) moneys FROM t_order_pay WHERE order_id = #{orderId} and sub_order_status=#{orderStatus};
+    </select> 
+
+	<select id="selOrderProductImages" parameterType="map" resultMap="orderResultMap">
+		SELECT tor.order_id,tod.product_id,tp.images
+		FROM t_order tor,t_order_details tod,t_product tp 
+		WHERE tor.order_id=tod.order_id AND tor.order_id in (${orderIds}) AND tp.idt_product=tod.product_id
+		order by tor.order_id asc
+	</select>
+
+	<select id="querySubOrderPay" parameterType="map" resultMap="orderPayRecordResultMap">
+		select id,order_id,pay_money,create_time,pay_type,pay_num,sub_order_status,sub_order_num,update_time
+        from t_order_pay where order_id = #{orderId} 
+  		<if test="sub_order_status != null ">  
+              and sub_order_status=#{sub_order_status}  
+		</if>  
+  		<if test="pay_type != null ">  
+              and pay_type=#{pay_type}  
+		</if> 		    
+        order by create_time;
+	</select> 
+
+	<select id="queryPayedMoneyByOrderId" parameterType="java.lang.Long" resultType="java.lang.Double">
+        SELECT SUM(pay_money) moneys FROM t_order_pay WHERE order_id = #{orderId} and sub_order_status=1;
+    </select>
+
+</mapper>
